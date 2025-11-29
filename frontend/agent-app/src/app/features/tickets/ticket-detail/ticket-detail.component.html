@@ -1,0 +1,79 @@
+<div class="ticket-detail">
+  @if (loading()) {
+    <div class="loading-spinner">
+      <mat-spinner></mat-spinner>
+    </div>
+  } @else if (ticket(); as currentTicket) {
+    <div class="header">
+      <button mat-icon-button (click)="goBack()">
+        <mat-icon>arrow_back</mat-icon>
+      </button>
+      <h1>{{ currentTicket.ticketNumber }}</h1>
+    </div>
+
+    <mat-card>
+      <mat-card-header>
+        <mat-card-title>{{ currentTicket.subject }}</mat-card-title>
+        <mat-card-subtitle>
+          Created {{ currentTicket.createdAt | date: 'medium' }}
+        </mat-card-subtitle>
+      </mat-card-header>
+
+      <mat-card-content>
+        <div class="ticket-info">
+          <div class="info-row">
+            <span class="label">Status:</span>
+            <mat-chip color="primary">{{ currentTicket.status }}</mat-chip>
+          </div>
+
+          <div class="info-row">
+            <span class="label">Priority:</span>
+            <mat-chip color="warn">{{ currentTicket.priority }}</mat-chip>
+          </div>
+
+          <div class="info-row">
+            <span class="label">Requester:</span>
+            <span>{{ currentTicket.requesterName }}</span>
+          </div>
+
+          <div class="info-row">
+            <span class="label">Assignee:</span>
+            <span>{{ currentTicket.assigneeName || 'Unassigned' }}</span>
+          </div>
+
+          <div class="info-row">
+            <span class="label">Project:</span>
+            <span>{{ currentTicket.projectName }}</span>
+          </div>
+
+          <div class="info-row">
+            <span class="label">Channel:</span>
+            <span>{{ currentTicket.channel }}</span>
+          </div>
+        </div>
+
+        <div class="description">
+          <h3>Description</h3>
+          <p>{{ currentTicket.description }}</p>
+        </div>
+      </mat-card-content>
+
+      <mat-card-actions>
+        <button mat-raised-button color="primary">
+          <mat-icon>reply</mat-icon>
+          Reply
+        </button>
+        <button mat-raised-button>
+          <mat-icon>person_add</mat-icon>
+          Assign
+        </button>
+        <button mat-raised-button>
+          <mat-icon>check</mat-icon>
+          Resolve
+        </button>
+      </mat-card-actions>
+    </mat-card>
+  } @else {
+    <p>Ticket not found</p>
+  }
+</div>

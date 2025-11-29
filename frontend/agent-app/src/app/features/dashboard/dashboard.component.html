@@ -1,0 +1,33 @@
+<div class="dashboard">
+  <h1>Dashboard</h1>
+
+  <div class="stats-grid">
+    @for (stat of stats; track stat.title) {
+      <mat-card class="stat-card">
+        <mat-card-content>
+          <div class="stat-icon" [style.background-color]="stat.color">
+            <mat-icon>{{ stat.icon }}</mat-icon>
+          </div>
+          <div class="stat-info">
+            <h2>{{ stat.value }}</h2>
+            <p>{{ stat.title }}</p>
+          </div>
+        </mat-card-content>
+      </mat-card>
+    }
+  </div>
+
+  <div class="recent-section">
+    <mat-card>
+      <mat-card-header>
+        <mat-card-title>Recent Tickets</mat-card-title>
+      </mat-card-header>
+      <mat-card-content>
+        <p>Loading recent tickets...</p>
+        <button mat-raised-button color="primary" (click)="navigateToTickets()">
+          View All Tickets
+        </button>
+      </mat-card-content>
+    </mat-card>
+  </div>
+</div>

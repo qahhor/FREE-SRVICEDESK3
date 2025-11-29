@@ -4,6 +4,7 @@ import io.greenwhite.servicedesk.common.enums.TicketStatus;
 import io.greenwhite.servicedesk.common.exception.ResourceNotFoundException;
 import io.greenwhite.servicedesk.ticket.dto.CreateTicketRequest;
 import io.greenwhite.servicedesk.ticket.dto.TicketDTO;
+import io.greenwhite.servicedesk.ticket.event.TicketEvent;
 import io.greenwhite.servicedesk.ticket.model.Project;
 import io.greenwhite.servicedesk.ticket.model.Ticket;
 import io.greenwhite.servicedesk.ticket.model.User;
@@ -28,6 +29,7 @@ public class TicketService {
     private final TicketRepository ticketRepository;
     private final ProjectRepository projectRepository;
     private final UserRepository userRepository;
+    private final WebSocketService webSocketService;
 
     @Transactional
     public TicketDTO createTicket(CreateTicketRequest request, UUID requesterId) {
@@ -62,7 +64,12 @@ public class TicketService {
         }
 
         ticket = ticketRepository.save(ticket);
-        return mapToDTO(ticket);
+        TicketDTO ticketDTO = mapToDTO(ticket);
+
+        // Broadcast ticket created event
+        webSocketService.broadcastTicketEvent(TicketEvent.created(ticketDTO));
+
+        return ticketDTO;
     }
 
     @Transactional(readOnly = true)
@@ -105,7 +112,12 @@ public class TicketService {
         }
 
         ticket = ticketRepository.save(ticket);
-        return mapToDTO(ticket);
+        TicketDTO ticketDTO = mapToDTO(ticket);
+
+        // Broadcast ticket status changed event
+        webSocketService.broadcastTicketEvent(TicketEvent.statusChanged(ticketDTO));
+
+        return ticketDTO;
     }
 
     @Transactional
@@ -118,7 +130,12 @@ public class TicketService {
 
         ticket.assignTo(assignee);
         ticket = ticketRepository.save(ticket);
-        return mapToDTO(ticket);
+        TicketDTO ticketDTO = mapToDTO(ticket);
+
+        // Broadcast ticket assigned event
+        webSocketService.broadcastTicketEvent(TicketEvent.assigned(ticketDTO));
+
+        return ticketDTO;
     }
 
     private synchronized long getNextTicketSequence(UUID projectId) {

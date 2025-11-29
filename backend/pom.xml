@@ -54,13 +54,6 @@
     <modules>
         <module>common-lib</module>
         <module>ticket-service</module>
-        <module>channel-service</module>
-        <module>telephony-service</module>
-        <module>ai-service</module>
-        <module>analytics-service</module>
-        <module>knowledge-service</module>
-        <module>notification-service</module>
-        <module>api-gateway</module>
     </modules>
 
     <dependencyManagement>

@@ -37,6 +37,8 @@ Service Desk Platform is a modern, open-source customer support solution designe
 - ✅ **User Management**: Role-based access control (Admin, Manager, Agent, Customer)
 - ✅ **Multi-Project Support**: Manage multiple departments or products
 - ✅ **Team Collaboration**: Shared inbox, internal notes, @mentions
+- ✅ **Real-time Updates**: WebSocket integration for live ticket updates
+- ✅ **Agent Portal**: Modern Angular-based frontend interface
 - 🚧 **Omnichannel Communication**:
   - Email (SMTP/IMAP)
   - Telegram Bot
@@ -85,7 +87,13 @@ mvn clean install
 cd ticket-service
 mvn spring-boot:run
 
+# In another terminal, start frontend
+cd frontend/agent-app
+npm install
+npm start
+
 # Access the application
+# Frontend: http://localhost:4200
 # API: http://localhost:8080/api/v1
 # Swagger UI: http://localhost:8080/swagger-ui.html
 ```
@@ -142,10 +150,11 @@ Password: admin123
 - MapStruct (DTO mapping)
 
 **Frontend:**
-- Angular 17+
-- Angular Material / PrimeNG
-- NgRx (state management)
-- WebSocket (real-time updates)
+- Angular 17+ (standalone components)
+- Angular Material
+- RxJS
+- STOMP.js + SockJS (WebSocket)
+- TypeScript 5.2
 
 **Infrastructure:**
 - Docker & Docker Compose

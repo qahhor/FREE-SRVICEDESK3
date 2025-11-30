@@ -54,6 +54,7 @@
     <modules>
         <module>common-lib</module>
         <module>ticket-service</module>
+        <module>channel-service</module>
     </modules>
 
     <dependencyManagement>

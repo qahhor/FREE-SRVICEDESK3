@@ -58,3 +58,15 @@ mat-card-actions {
   display: flex;
   gap: 12px;
 }
+
+.comments-section {
+  margin-top: 32px;
+
+  .tab-content {
+    padding: 24px 0;
+  }
+
+  ::ng-deep .mat-mdc-tab-body-content {
+    overflow: visible;
+  }
+}

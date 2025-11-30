@@ -73,6 +73,31 @@
         </button>
       </mat-card-actions>
     </mat-card>
+
+    <!-- Comments Section -->
+    <div class="comments-section">
+      <mat-tab-group>
+        <mat-tab label="Comments">
+          <div class="tab-content">
+            <app-comment-list
+              [ticketId]="currentTicket.id"
+              [includeInternal]="true">
+            </app-comment-list>
+
+            <app-comment-form
+              [ticketId]="currentTicket.id"
+              (commentAdded)="onCommentAdded()">
+            </app-comment-form>
+          </div>
+        </mat-tab>
+
+        <mat-tab label="History">
+          <div class="tab-content">
+            <p>Ticket history will be displayed here</p>
+          </div>
+        </mat-tab>
+      </mat-tab-group>
+    </div>
   } @else {
     <p>Ticket not found</p>
   }

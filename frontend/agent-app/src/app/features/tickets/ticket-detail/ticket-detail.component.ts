@@ -6,9 +6,12 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { MatChipsModule } from '@angular/material/chips';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
+import { MatTabsModule } from '@angular/material/tabs';
 
 import { TicketService } from '../../../core/services/ticket.service';
 import { Ticket } from '../../../core/models/ticket.model';
+import { CommentListComponent } from '../components/comment-list/comment-list.component';
+import { CommentFormComponent } from '../components/comment-form/comment-form.component';
 
 @Component({
   selector: 'app-ticket-detail',
@@ -19,7 +22,10 @@ import { Ticket } from '../../../core/models/ticket.model';
     MatButtonModule,
     MatIconModule,
     MatChipsModule,
-    MatProgressSpinnerModule
+    MatProgressSpinnerModule,
+    MatTabsModule,
+    CommentListComponent,
+    CommentFormComponent
   ],
   templateUrl: './ticket-detail.component.html',
   styleUrls: ['./ticket-detail.component.scss']
@@ -56,6 +62,11 @@ export class TicketDetailComponent implements OnInit {
         this.loading.set(false);
       }
     });
+  }
+
+  onCommentAdded(): void {
+    // Comment list will auto-refresh via WebSocket
+    console.log('Comment added successfully');
   }
 
   goBack(): void {

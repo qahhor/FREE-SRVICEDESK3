@@ -1,0 +1,73 @@
+<div class="comment-list">
+  @if (loading()) {
+    <div class="loading-container">
+      <mat-spinner diameter="40"></mat-spinner>
+      <p>Loading comments...</p>
+    </div>
+  }
+
+  @if (error()) {
+    <mat-card class="error-card">
+      <mat-card-content>
+        <mat-icon color="warn">error</mat-icon>
+        <p>{{ error() }}</p>
+        <button mat-raised-button color="primary" (click)="loadComments()">
+          <mat-icon>refresh</mat-icon>
+          Retry
+        </button>
+      </mat-card-content>
+    </mat-card>
+  }
+
+  @if (!loading() && !error()) {
+    <div class="comments-container">
+      @if (comments().length === 0) {
+        <div class="no-comments">
+          <mat-icon>chat_bubble_outline</mat-icon>
+          <p>No comments yet. Be the first to comment!</p>
+        </div>
+      } @else {
+        @for (comment of comments(); track comment.id) {
+          <mat-card class="comment-card" [class.internal]="comment.isInternal" [class.automated]="comment.isAutomated">
+            <mat-card-header>
+              <div class="comment-avatar" mat-card-avatar>
+                {{ getAuthorInitials(comment) }}
+              </div>
+              <mat-card-title>
+                <span class="author-name">{{ comment.author?.fullName || comment.author?.username || 'System' }}</span>
+                @if (comment.isInternal) {
+                  <mat-chip class="internal-chip">
+                    <mat-icon>lock</mat-icon>
+                    Internal
+                  </mat-chip>
+                }
+                @if (comment.isAutomated) {
+                  <mat-chip class="automated-chip">
+                    <mat-icon>smart_toy</mat-icon>
+                    Automated
+                  </mat-chip>
+                }
+              </mat-card-title>
+              <mat-card-subtitle>
+                {{ formatDate(comment.createdAt) }}
+                @if (comment.updatedAt !== comment.createdAt) {
+                  <span class="edited-label">(edited)</span>
+                }
+              </mat-card-subtitle>
+            </mat-card-header>
+            <mat-card-content>
+              <div class="comment-content" [innerHTML]="comment.content"></div>
+              @if (comment.attachments) {
+                <div class="attachments">
+                  <mat-icon>attach_file</mat-icon>
+                  <span>Attachments: {{ comment.attachments }}</span>
+                </div>
+              }
+            </mat-card-content>
+          </mat-card>
+          <mat-divider></mat-divider>
+        }
+      }
+    </div>
+  }
+</div>

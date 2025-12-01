@@ -1,0 +1,66 @@
+<mat-card class="comment-form-card">
+  <mat-card-header>
+    <mat-card-title>
+      <mat-icon>add_comment</mat-icon>
+      Add Comment
+    </mat-card-title>
+  </mat-card-header>
+
+  <mat-card-content>
+    <form [formGroup]="commentForm" (ngSubmit)="onSubmit()">
+      <mat-form-field appearance="outline" class="full-width">
+        <mat-label>Comment</mat-label>
+        <textarea
+          matInput
+          formControlName="content"
+          placeholder="Write your comment here..."
+          rows="5"
+          [disabled]="submitting()"
+        ></textarea>
+        <mat-hint align="end">{{ characterCount }} / 10000</mat-hint>
+        @if (contentControl?.hasError('required') && contentControl?.touched) {
+          <mat-error>Comment is required</mat-error>
+        }
+        @if (contentControl?.hasError('maxlength')) {
+          <mat-error>Comment is too long (max 10000 characters)</mat-error>
+        }
+      </mat-form-field>
+
+      <div class="form-options">
+        <mat-checkbox formControlName="isInternal" [disabled]="submitting()">
+          <span class="internal-label">
+            <mat-icon>lock</mat-icon>
+            Make this comment internal (visible only to agents)
+          </span>
+        </mat-checkbox>
+      </div>
+
+      <div class="form-actions">
+        <button
+          mat-button
+          type="button"
+          (click)="cancel()"
+          [disabled]="submitting()"
+        >
+          <mat-icon>close</mat-icon>
+          Cancel
+        </button>
+
+        <button
+          mat-raised-button
+          color="primary"
+          type="submit"
+          [disabled]="commentForm.invalid || submitting()"
+        >
+          @if (submitting()) {
+            <mat-icon>hourglass_empty</mat-icon>
+            Submitting...
+          } @else {
+            <mat-icon>send</mat-icon>
+            Add Comment
+          }
+        </button>
+      </div>
+    </form>
+  </mat-card-content>
+</mat-card>

@@ -37,4 +37,8 @@ public class ApiResponse<T> {
     public static <T> ApiResponse<T> error(String message, String error) {
         return new ApiResponse<>(false, message, null, error, LocalDateTime.now());
     }
+
+    public static <T> ApiResponse<T> error(String message, T data) {
+        return new ApiResponse<>(false, message, data, null, LocalDateTime.now());
+    }
 }

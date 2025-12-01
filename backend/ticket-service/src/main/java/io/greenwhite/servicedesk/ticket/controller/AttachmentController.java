@@ -52,7 +52,7 @@ public class AttachmentController {
 
         return ResponseEntity
             .status(HttpStatus.CREATED)
-            .body(ApiResponse.success(attachment, "File uploaded successfully"));
+            .body(ApiResponse.success("File uploaded successfully", attachment));
     }
 
     /**
@@ -72,7 +72,7 @@ public class AttachmentController {
 
         return ResponseEntity
             .status(HttpStatus.CREATED)
-            .body(ApiResponse.success(attachment, "File uploaded successfully"));
+            .body(ApiResponse.success("File uploaded successfully", attachment));
     }
 
     /**
@@ -81,14 +81,14 @@ public class AttachmentController {
     @GetMapping("/tickets/{ticketId}/attachments")
     @Operation(summary = "Get ticket attachments", description = "Retrieves all attachments for a specific ticket")
     public ResponseEntity<ApiResponse<List<AttachmentResponse>>> getTicketAttachments(
-            @PathVariable UUID ticketId) {
+            @PathVariable("ticketId") UUID ticketId) {
 
         log.info("GET /api/v1/tickets/{}/attachments - Fetching attachments", ticketId);
 
         List<AttachmentResponse> attachments = fileStorageService.getTicketAttachments(ticketId);
 
         return ResponseEntity.ok(
-            ApiResponse.success(attachments, "Attachments retrieved successfully")
+            ApiResponse.success("Attachments retrieved successfully", attachments)
         );
     }
 
@@ -98,14 +98,14 @@ public class AttachmentController {
     @GetMapping("/comments/{commentId}/attachments")
     @Operation(summary = "Get comment attachments", description = "Retrieves all attachments for a specific comment")
     public ResponseEntity<ApiResponse<List<AttachmentResponse>>> getCommentAttachments(
-            @PathVariable UUID commentId) {
+            @PathVariable("commentId") UUID commentId) {
 
         log.info("GET /api/v1/comments/{}/attachments - Fetching attachments", commentId);
 
         List<AttachmentResponse> attachments = fileStorageService.getCommentAttachments(commentId);
 
         return ResponseEntity.ok(
-            ApiResponse.success(attachments, "Attachments retrieved successfully")
+            ApiResponse.success("Attachments retrieved successfully", attachments)
         );
     }
 
@@ -157,7 +157,7 @@ public class AttachmentController {
         fileStorageService.deleteAttachment(attachmentId, userId);
 
         return ResponseEntity.ok(
-            ApiResponse.success(null, "Attachment deleted successfully")
+            ApiResponse.success("Attachment deleted successfully", (Void) null)
         );
     }
 
@@ -180,6 +180,6 @@ public class AttachmentController {
 
         return ResponseEntity
             .status(HttpStatus.CREATED)
-            .body(ApiResponse.success(attachments, String.format("%d files uploaded successfully", files.length)));
+            .body(ApiResponse.success(String.format("%d files uploaded successfully", files.length), attachments));
     }
 }

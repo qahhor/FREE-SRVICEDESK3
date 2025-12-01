@@ -3,7 +3,6 @@ package io.greenwhite.servicedesk.ticket.service;
 import io.greenwhite.servicedesk.ticket.dto.CommentRequest;
 import io.greenwhite.servicedesk.ticket.dto.CommentResponse;
 import io.greenwhite.servicedesk.ticket.event.TicketEvent;
-import io.greenwhite.servicedesk.ticket.event.TicketEventType;
 import io.greenwhite.servicedesk.ticket.model.Comment;
 import io.greenwhite.servicedesk.ticket.model.Ticket;
 import io.greenwhite.servicedesk.ticket.model.User;
@@ -67,7 +66,7 @@ public class CommentService {
 
         // Broadcast comment event via WebSocket
         webSocketService.broadcastTicketEvent(TicketEvent.builder()
-            .type(TicketEventType.COMMENTED)
+            .type(TicketEvent.TicketEventType.COMMENTED)
             .ticketId(ticket.getId())
             .message("New comment added to ticket " + ticket.getTicketNumber())
             .timestamp(LocalDateTime.now())
@@ -134,7 +133,7 @@ public class CommentService {
 
         // Broadcast update event
         webSocketService.broadcastTicketEvent(TicketEvent.builder()
-            .type(TicketEventType.COMMENTED)
+            .type(TicketEvent.TicketEventType.COMMENTED)
             .ticketId(comment.getTicket().getId())
             .message("Comment updated on ticket " + comment.getTicket().getTicketNumber())
             .timestamp(LocalDateTime.now())
@@ -205,7 +204,7 @@ public class CommentService {
             User author = comment.getAuthor();
             authorInfo = CommentResponse.AuthorInfo.builder()
                 .id(author.getId())
-                .username(author.getUsername())
+                .username(author.getEmail())
                 .email(author.getEmail())
                 .fullName(author.getFullName())
                 .role(author.getRole() != null ? author.getRole().name() : null)

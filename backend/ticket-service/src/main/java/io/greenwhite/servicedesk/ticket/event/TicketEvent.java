@@ -19,6 +19,7 @@ public class TicketEvent {
 
     private TicketEventType type;
     private TicketDTO ticket;
+    private java.util.UUID ticketId;
     private String message;
     private LocalDateTime timestamp;
 

@@ -5,6 +5,7 @@ import io.greenwhite.servicedesk.common.enums.TicketPriority;
 import io.greenwhite.servicedesk.common.enums.TicketStatus;
 import io.greenwhite.servicedesk.ticket.dto.CreateTicketRequest;
 import io.greenwhite.servicedesk.ticket.dto.TicketDTO;
+import io.greenwhite.servicedesk.ticket.security.UserPrincipal;
 import io.greenwhite.servicedesk.ticket.service.TicketService;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.BeforeEach;
@@ -17,9 +18,13 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.PageableHandlerMethodArgumentResolver;
 import org.springframework.http.MediaType;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
+import org.springframework.web.method.support.HandlerMethodArgumentResolver;
 
 import java.util.Collections;
 import java.util.UUID;
@@ -47,9 +52,26 @@ class TicketControllerTest {
     @InjectMocks
     private TicketController ticketController;
 
+    private UUID testUserId;
+    private UserPrincipal testUserPrincipal;
+
     @BeforeEach
     void setUp() {
-        mockMvc = MockMvcBuilders.standaloneSetup(ticketController).build();
+        testUserId = UUID.randomUUID();
+        testUserPrincipal = new UserPrincipal(
+            testUserId, 
+            "test@example.com", 
+            "password",
+            Collections.singletonList(new SimpleGrantedAuthority("ROLE_AGENT")),
+            true
+        );
+
+        mockMvc = MockMvcBuilders.standaloneSetup(ticketController)
+            .setCustomArgumentResolvers(
+                new PageableHandlerMethodArgumentResolver(),
+                new TestUserPrincipalArgumentResolver(testUserPrincipal)
+            )
+            .build();
         objectMapper = new ObjectMapper();
     }
 
@@ -73,7 +95,7 @@ class TicketControllerTest {
                 .priority(TicketPriority.HIGH)
                 .build();
 
-        when(ticketService.createTicket(any(CreateTicketRequest.class), any()))
+        when(ticketService.createTicket(any(CreateTicketRequest.class), eq(testUserId)))
                 .thenReturn(response);
 
         // When & Then
@@ -97,7 +119,7 @@ class TicketControllerTest {
                 .build();
 
         Page<TicketDTO> page = new PageImpl<>(Collections.singletonList(ticket), PageRequest.of(0, 20), 1);
-        when(ticketService.getAllTickets(any())).thenReturn(page);
+        when(ticketService.getAllTickets(any(Pageable.class))).thenReturn(page);
 
         // When & Then
         mockMvc.perform(get("/tickets")
@@ -120,10 +142,10 @@ class TicketControllerTest {
                 .subject("Test Ticket")
                 .build();
 
-        when(ticketService.getTicket(ticketId)).thenReturn(ticket);
+        when(ticketService.getTicket(any(UUID.class))).thenReturn(ticket);
 
         // When & Then
-        mockMvc.perform(get("/tickets/" + ticketId))
+        mockMvc.perform(get("/tickets/{id}", ticketId))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.success").value(true))
                 .andExpect(jsonPath("$.data.id").value(ticketId.toString()));
@@ -139,11 +161,11 @@ class TicketControllerTest {
                 .status(TicketStatus.RESOLVED)
                 .build();
 
-        when(ticketService.updateTicketStatus(eq(ticketId), eq(TicketStatus.RESOLVED)))
+        when(ticketService.updateTicketStatus(any(UUID.class), eq(TicketStatus.RESOLVED)))
                 .thenReturn(updatedTicket);
 
         // When & Then
-        mockMvc.perform(patch("/tickets/" + ticketId + "/status")
+        mockMvc.perform(patch("/tickets/{id}/status", ticketId)
                         .param("status", "RESOLVED"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.success").value(true))
@@ -161,10 +183,10 @@ class TicketControllerTest {
                 .subject("Test Ticket")
                 .build();
 
-        when(ticketService.getTicketByNumber(ticketNumber)).thenReturn(ticket);
+        when(ticketService.getTicketByNumber(any(String.class))).thenReturn(ticket);
 
         // When & Then
-        mockMvc.perform(get("/tickets/number/" + ticketNumber))
+        mockMvc.perform(get("/tickets/number/{ticketNumber}", ticketNumber))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.success").value(true))
                 .andExpect(jsonPath("$.data.ticketNumber").value(ticketNumber));
@@ -182,14 +204,40 @@ class TicketControllerTest {
                 .status(TicketStatus.OPEN)
                 .build();
 
-        when(ticketService.assignTicket(eq(ticketId), eq(assigneeId)))
+        when(ticketService.assignTicket(any(UUID.class), any(UUID.class)))
                 .thenReturn(assignedTicket);
 
         // When & Then
-        mockMvc.perform(patch("/tickets/" + ticketId + "/assign")
+        mockMvc.perform(patch("/tickets/{id}/assign", ticketId)
                         .param("assigneeId", assigneeId.toString()))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.success").value(true))
                 .andExpect(jsonPath("$.data.assigneeId").value(assigneeId.toString()));
+    }
+}
+
+/**
+ * Test argument resolver for UserPrincipal
+ */
+class TestUserPrincipalArgumentResolver implements HandlerMethodArgumentResolver {
+    
+    private final UserPrincipal userPrincipal;
+    
+    public TestUserPrincipalArgumentResolver(UserPrincipal userPrincipal) {
+        this.userPrincipal = userPrincipal;
+    }
+    
+    @Override
+    public boolean supportsParameter(org.springframework.core.MethodParameter parameter) {
+        return parameter.getParameterType().isAssignableFrom(UserPrincipal.class);
+    }
+    
+    @Override
+    public Object resolveArgument(
+            org.springframework.core.MethodParameter parameter,
+            org.springframework.web.method.support.ModelAndViewContainer mavContainer,
+            org.springframework.web.context.request.NativeWebRequest webRequest,
+            org.springframework.web.bind.support.WebDataBinderFactory binderFactory) {
+        return userPrincipal;
     }
 }

@@ -81,7 +81,7 @@ public class AttachmentController {
     @GetMapping("/tickets/{ticketId}/attachments")
     @Operation(summary = "Get ticket attachments", description = "Retrieves all attachments for a specific ticket")
     public ResponseEntity<ApiResponse<List<AttachmentResponse>>> getTicketAttachments(
-            @PathVariable UUID ticketId) {
+            @PathVariable("ticketId") UUID ticketId) {
 
         log.info("GET /api/v1/tickets/{}/attachments - Fetching attachments", ticketId);
 
@@ -98,7 +98,7 @@ public class AttachmentController {
     @GetMapping("/comments/{commentId}/attachments")
     @Operation(summary = "Get comment attachments", description = "Retrieves all attachments for a specific comment")
     public ResponseEntity<ApiResponse<List<AttachmentResponse>>> getCommentAttachments(
-            @PathVariable UUID commentId) {
+            @PathVariable("commentId") UUID commentId) {
 
         log.info("GET /api/v1/comments/{}/attachments - Fetching attachments", commentId);
 

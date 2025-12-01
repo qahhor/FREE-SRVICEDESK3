@@ -37,7 +37,7 @@ public class CommentController {
     @PostMapping("/tickets/{ticketId}/comments")
     @Operation(summary = "Add comment to ticket", description = "Creates a new comment on the specified ticket")
     public ResponseEntity<ApiResponse<CommentResponse>> addComment(
-            @PathVariable UUID ticketId,
+            @PathVariable("ticketId") UUID ticketId,
             @Valid @RequestBody CommentRequest request,
             Authentication authentication) {
 
@@ -57,8 +57,8 @@ public class CommentController {
     @GetMapping("/tickets/{ticketId}/comments")
     @Operation(summary = "Get ticket comments", description = "Retrieves all comments for a specific ticket")
     public ResponseEntity<ApiResponse<List<CommentResponse>>> getComments(
-            @PathVariable UUID ticketId,
-            @RequestParam(defaultValue = "true") boolean includeInternal,
+            @PathVariable("ticketId") UUID ticketId,
+            @RequestParam(value = "includeInternal", defaultValue = "true") boolean includeInternal,
             Authentication authentication) {
 
         log.info("GET /api/v1/tickets/{}/comments - Fetching comments", ticketId);
@@ -77,7 +77,7 @@ public class CommentController {
     @GetMapping("/comments/{commentId}")
     @Operation(summary = "Get comment by ID", description = "Retrieves a specific comment")
     public ResponseEntity<ApiResponse<CommentResponse>> getComment(
-            @PathVariable UUID commentId) {
+            @PathVariable("commentId") UUID commentId) {
 
         log.info("GET /api/v1/comments/{} - Fetching comment", commentId);
 
@@ -94,7 +94,7 @@ public class CommentController {
     @PutMapping("/comments/{commentId}")
     @Operation(summary = "Update comment", description = "Updates an existing comment")
     public ResponseEntity<ApiResponse<CommentResponse>> updateComment(
-            @PathVariable UUID commentId,
+            @PathVariable("commentId") UUID commentId,
             @Valid @RequestBody CommentRequest request,
             Authentication authentication) {
 
@@ -114,7 +114,7 @@ public class CommentController {
     @DeleteMapping("/comments/{commentId}")
     @Operation(summary = "Delete comment", description = "Soft deletes a comment")
     public ResponseEntity<ApiResponse<Void>> deleteComment(
-            @PathVariable UUID commentId,
+            @PathVariable("commentId") UUID commentId,
             Authentication authentication) {
 
         log.info("DELETE /api/v1/comments/{} - Deleting comment", commentId);
@@ -132,7 +132,7 @@ public class CommentController {
      */
     @GetMapping("/tickets/{ticketId}/comments/count")
     @Operation(summary = "Count comments", description = "Returns the number of comments on a ticket")
-    public ResponseEntity<ApiResponse<Long>> getCommentCount(@PathVariable UUID ticketId) {
+    public ResponseEntity<ApiResponse<Long>> getCommentCount(@PathVariable("ticketId") UUID ticketId) {
 
         log.info("GET /api/v1/tickets/{}/comments/count - Counting comments", ticketId);
 

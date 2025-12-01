@@ -48,14 +48,14 @@ public class TicketController {
 
     @GetMapping("/{id}")
     @PreAuthorize("hasAnyRole('ADMIN', 'MANAGER', 'AGENT', 'CUSTOMER')")
-    public ResponseEntity<ApiResponse<TicketDTO>> getTicket(@PathVariable UUID id) {
+    public ResponseEntity<ApiResponse<TicketDTO>> getTicket(@PathVariable("id") UUID id) {
         TicketDTO ticket = ticketService.getTicket(id);
         return ResponseEntity.ok(ApiResponse.success(ticket));
     }
 
     @GetMapping("/number/{ticketNumber}")
     @PreAuthorize("hasAnyRole('ADMIN', 'MANAGER', 'AGENT', 'CUSTOMER')")
-    public ResponseEntity<ApiResponse<TicketDTO>> getTicketByNumber(@PathVariable String ticketNumber) {
+    public ResponseEntity<ApiResponse<TicketDTO>> getTicketByNumber(@PathVariable("ticketNumber") String ticketNumber) {
         TicketDTO ticket = ticketService.getTicketByNumber(ticketNumber);
         return ResponseEntity.ok(ApiResponse.success(ticket));
     }
@@ -63,9 +63,9 @@ public class TicketController {
     @GetMapping("/search")
     @PreAuthorize("hasAnyRole('ADMIN', 'MANAGER', 'AGENT')")
     public ResponseEntity<ApiResponse<Page<TicketDTO>>> searchTickets(
-            @RequestParam(required = false) TicketStatus status,
-            @RequestParam(required = false) UUID assigneeId,
-            @RequestParam(required = false) UUID projectId,
+            @RequestParam(value = "status", required = false) TicketStatus status,
+            @RequestParam(value = "assigneeId", required = false) UUID assigneeId,
+            @RequestParam(value = "projectId", required = false) UUID projectId,
             Pageable pageable) {
         Page<TicketDTO> tickets = ticketService.getTicketsByFilters(status, assigneeId, projectId, pageable);
         return ResponseEntity.ok(ApiResponse.success(tickets));
@@ -74,8 +74,8 @@ public class TicketController {
     @PatchMapping("/{id}/status")
     @PreAuthorize("hasAnyRole('ADMIN', 'MANAGER', 'AGENT')")
     public ResponseEntity<ApiResponse<TicketDTO>> updateTicketStatus(
-            @PathVariable UUID id,
-            @RequestParam TicketStatus status) {
+            @PathVariable("id") UUID id,
+            @RequestParam("status") TicketStatus status) {
         TicketDTO ticket = ticketService.updateTicketStatus(id, status);
         return ResponseEntity.ok(ApiResponse.success("Ticket status updated", ticket));
     }
@@ -83,8 +83,8 @@ public class TicketController {
     @PatchMapping("/{id}/assign")
     @PreAuthorize("hasAnyRole('ADMIN', 'MANAGER', 'AGENT')")
     public ResponseEntity<ApiResponse<TicketDTO>> assignTicket(
-            @PathVariable UUID id,
-            @RequestParam UUID assigneeId) {
+            @PathVariable("id") UUID id,
+            @RequestParam("assigneeId") UUID assigneeId) {
         TicketDTO ticket = ticketService.assignTicket(id, assigneeId);
         return ResponseEntity.ok(ApiResponse.success("Ticket assigned successfully", ticket));
     }

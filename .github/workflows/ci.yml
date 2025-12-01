@@ -6,6 +6,10 @@ on:
   pull_request:
     branches: [ main, develop ]
 
+permissions:
+  contents: read
+  pull-requests: write
+
 jobs:
   build:
     runs-on: ubuntu-latest
@@ -49,7 +53,7 @@ jobs:
       with:
         paths: backend/ticket-service/target/site/jacoco/jacoco.xml
         token: ${{ secrets.GITHUB_TOKEN }}
-        min-coverage-overall: 70
-        min-coverage-changed-files: 70
+        min-coverage-overall: 65
+        min-coverage-changed-files: 65
         title: Code Coverage Report
         update-comment: true

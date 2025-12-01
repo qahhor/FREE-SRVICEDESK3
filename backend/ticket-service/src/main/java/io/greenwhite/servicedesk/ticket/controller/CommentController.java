@@ -48,7 +48,7 @@ public class CommentController {
 
         return ResponseEntity
             .status(HttpStatus.CREATED)
-            .body(ApiResponse.success(comment, "Comment added successfully"));
+            .body(ApiResponse.success("Comment added successfully", comment));
     }
 
     /**
@@ -67,7 +67,7 @@ public class CommentController {
         List<CommentResponse> comments = commentService.getCommentsByTicketId(ticketId, includeInternal);
 
         return ResponseEntity.ok(
-            ApiResponse.success(comments, "Comments retrieved successfully")
+            ApiResponse.success("Comments retrieved successfully", comments)
         );
     }
 
@@ -84,7 +84,7 @@ public class CommentController {
         CommentResponse comment = commentService.getCommentById(commentId);
 
         return ResponseEntity.ok(
-            ApiResponse.success(comment, "Comment retrieved successfully")
+            ApiResponse.success("Comment retrieved successfully", comment)
         );
     }
 
@@ -104,7 +104,7 @@ public class CommentController {
         CommentResponse comment = commentService.updateComment(commentId, request, userId);
 
         return ResponseEntity.ok(
-            ApiResponse.success(comment, "Comment updated successfully")
+            ApiResponse.success("Comment updated successfully", comment)
         );
     }
 
@@ -123,7 +123,7 @@ public class CommentController {
         commentService.deleteComment(commentId, userId);
 
         return ResponseEntity.ok(
-            ApiResponse.success(null, "Comment deleted successfully")
+            ApiResponse.success("Comment deleted successfully", (Void) null)
         );
     }
 
@@ -139,7 +139,7 @@ public class CommentController {
         Long count = commentService.countComments(ticketId);
 
         return ResponseEntity.ok(
-            ApiResponse.success(count, "Comment count retrieved successfully")
+            ApiResponse.success("Comment count retrieved successfully", count)
         );
     }
 }

@@ -52,7 +52,7 @@ public class AttachmentController {
 
         return ResponseEntity
             .status(HttpStatus.CREATED)
-            .body(ApiResponse.success(attachment, "File uploaded successfully"));
+            .body(ApiResponse.success("File uploaded successfully", attachment));
     }
 
     /**
@@ -72,7 +72,7 @@ public class AttachmentController {
 
         return ResponseEntity
             .status(HttpStatus.CREATED)
-            .body(ApiResponse.success(attachment, "File uploaded successfully"));
+            .body(ApiResponse.success("File uploaded successfully", attachment));
     }
 
     /**
@@ -88,7 +88,7 @@ public class AttachmentController {
         List<AttachmentResponse> attachments = fileStorageService.getTicketAttachments(ticketId);
 
         return ResponseEntity.ok(
-            ApiResponse.success(attachments, "Attachments retrieved successfully")
+            ApiResponse.success("Attachments retrieved successfully", attachments)
         );
     }
 
@@ -105,7 +105,7 @@ public class AttachmentController {
         List<AttachmentResponse> attachments = fileStorageService.getCommentAttachments(commentId);
 
         return ResponseEntity.ok(
-            ApiResponse.success(attachments, "Attachments retrieved successfully")
+            ApiResponse.success("Attachments retrieved successfully", attachments)
         );
     }
 
@@ -157,7 +157,7 @@ public class AttachmentController {
         fileStorageService.deleteAttachment(attachmentId, userId);
 
         return ResponseEntity.ok(
-            ApiResponse.success(null, "Attachment deleted successfully")
+            ApiResponse.success("Attachment deleted successfully", (Void) null)
         );
     }
 
@@ -180,6 +180,6 @@ public class AttachmentController {
 
         return ResponseEntity
             .status(HttpStatus.CREATED)
-            .body(ApiResponse.success(attachments, String.format("%d files uploaded successfully", files.length)));
+            .body(ApiResponse.success(String.format("%d files uploaded successfully", files.length), attachments));
     }
 }

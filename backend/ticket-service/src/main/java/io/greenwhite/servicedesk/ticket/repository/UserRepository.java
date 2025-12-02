@@ -16,4 +16,9 @@ public interface UserRepository extends JpaRepository<User, UUID> {
     Optional<User> findByEmail(String email);
 
     boolean existsByEmail(String email);
+
+    /**
+     * Find first user (for widget session fallback)
+     */
+    Optional<User> findFirstByOrderByCreatedAtAsc();
 }

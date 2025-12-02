@@ -1,0 +1,153 @@
+// Animation keyframes
+
+@keyframes sd-fade-in {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes sd-fade-out {
+  from {
+    opacity: 1;
+  }
+  to {
+    opacity: 0;
+  }
+}
+
+@keyframes sd-slide-up {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes sd-slide-down {
+  from {
+    opacity: 1;
+    transform: translateY(0);
+  }
+  to {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+}
+
+@keyframes sd-scale-in {
+  from {
+    opacity: 0;
+    transform: scale(0.8);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+@keyframes sd-scale-out {
+  from {
+    opacity: 1;
+    transform: scale(1);
+  }
+  to {
+    opacity: 0;
+    transform: scale(0.8);
+  }
+}
+
+@keyframes sd-bounce {
+  0%, 100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-5px);
+  }
+}
+
+@keyframes sd-pulse {
+  0% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.05);
+  }
+  100% {
+    transform: scale(1);
+  }
+}
+
+@keyframes sd-typing-dot {
+  0%, 60%, 100% {
+    opacity: 0.4;
+    transform: translateY(0);
+  }
+  30% {
+    opacity: 1;
+    transform: translateY(-4px);
+  }
+}
+
+@keyframes sd-spinner {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}
+
+@keyframes sd-shake {
+  0%, 100% {
+    transform: translateX(0);
+  }
+  10%, 30%, 50%, 70%, 90% {
+    transform: translateX(-5px);
+  }
+  20%, 40%, 60%, 80% {
+    transform: translateX(5px);
+  }
+}
+
+// Animation classes
+.sd-animate-fade-in {
+  animation: sd-fade-in 0.25s ease forwards;
+}
+
+.sd-animate-fade-out {
+  animation: sd-fade-out 0.25s ease forwards;
+}
+
+.sd-animate-slide-up {
+  animation: sd-slide-up 0.3s ease forwards;
+}
+
+.sd-animate-slide-down {
+  animation: sd-slide-down 0.3s ease forwards;
+}
+
+.sd-animate-scale-in {
+  animation: sd-scale-in 0.2s ease forwards;
+}
+
+.sd-animate-scale-out {
+  animation: sd-scale-out 0.2s ease forwards;
+}
+
+.sd-animate-bounce {
+  animation: sd-bounce 0.5s ease;
+}
+
+.sd-animate-pulse {
+  animation: sd-pulse 0.3s ease;
+}
+
+.sd-animate-shake {
+  animation: sd-shake 0.5s ease;
+}

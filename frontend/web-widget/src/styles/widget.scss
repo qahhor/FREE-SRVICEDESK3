@@ -1,0 +1,718 @@
+@import './variables.scss';
+@import './animations.scss';
+
+// Reset styles scoped to widget
+.#{$prefix}-container {
+  *,
+  *::before,
+  *::after {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+  }
+
+  font-family: $font-family;
+  font-size: $font-size-base;
+  line-height: 1.5;
+  color: $text-primary;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+// Container
+.#{$prefix}-container {
+  position: fixed;
+  z-index: $z-index-widget;
+  
+  &.position-bottom-right {
+    bottom: 20px;
+    right: 20px;
+  }
+  
+  &.position-bottom-left {
+    bottom: 20px;
+    left: 20px;
+  }
+}
+
+// Launcher Button
+.#{$prefix}-launcher {
+  width: $launcher-size;
+  height: $launcher-size;
+  border-radius: 50%;
+  background-color: $primary-color;
+  border: none;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: $shadow-medium;
+  transition: all $transition-normal;
+  position: relative;
+  
+  &:hover {
+    background-color: $primary-dark;
+    transform: scale(1.05);
+    box-shadow: $shadow-large;
+  }
+  
+  &:active {
+    transform: scale(0.95);
+  }
+  
+  &:focus {
+    outline: none;
+    box-shadow: 0 0 0 3px rgba($primary-color, 0.3), $shadow-medium;
+  }
+  
+  svg {
+    width: 28px;
+    height: 28px;
+    color: $text-light;
+    transition: transform $transition-normal;
+  }
+  
+  &.is-open svg {
+    transform: rotate(90deg);
+  }
+}
+
+// Unread badge
+.#{$prefix}-badge {
+  position: absolute;
+  top: -4px;
+  right: -4px;
+  min-width: 20px;
+  height: 20px;
+  padding: 0 6px;
+  background-color: $error-color;
+  color: $text-light;
+  font-size: $font-size-xs;
+  font-weight: 600;
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  animation: sd-scale-in 0.2s ease;
+  
+  &:empty {
+    display: none;
+  }
+}
+
+// Chat Window
+.#{$prefix}-window {
+  position: absolute;
+  bottom: calc($launcher-size + 16px);
+  right: 0;
+  width: $widget-width;
+  height: $widget-height;
+  max-height: $widget-max-height;
+  background-color: $bg-white;
+  border-radius: $border-radius-large;
+  box-shadow: $shadow-large;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  opacity: 0;
+  transform: translateY(20px) scale(0.95);
+  pointer-events: none;
+  transition: all $transition-normal;
+  
+  &.is-visible {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+    pointer-events: auto;
+  }
+  
+  &.is-minimized {
+    height: $header-height;
+    
+    .#{$prefix}-body,
+    .#{$prefix}-input {
+      display: none;
+    }
+  }
+  
+  .position-bottom-left & {
+    right: auto;
+    left: 0;
+  }
+  
+  // Mobile responsive
+  @media (max-width: $mobile-breakpoint) {
+    width: calc(100vw - 32px);
+    height: calc(100vh - 100px);
+    max-height: none;
+    bottom: calc($launcher-size + 16px);
+  }
+}
+
+// Header
+.#{$prefix}-header {
+  height: $header-height;
+  min-height: $header-height;
+  background-color: $primary-color;
+  color: $text-light;
+  padding: 0 $spacing-lg;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-shrink: 0;
+}
+
+.#{$prefix}-header-info {
+  display: flex;
+  align-items: center;
+  gap: $spacing-md;
+}
+
+.#{$prefix}-header-avatar {
+  width: $avatar-size;
+  height: $avatar-size;
+  border-radius: 50%;
+  background-color: rgba(255, 255, 255, 0.2);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  
+  svg {
+    width: 18px;
+    height: 18px;
+    color: $text-light;
+  }
+  
+  img {
+    width: 100%;
+    height: 100%;
+    border-radius: 50%;
+    object-fit: cover;
+  }
+}
+
+.#{$prefix}-header-text {
+  display: flex;
+  flex-direction: column;
+}
+
+.#{$prefix}-header-title {
+  font-size: $font-size-base;
+  font-weight: 600;
+  line-height: 1.2;
+}
+
+.#{$prefix}-header-status {
+  font-size: $font-size-xs;
+  opacity: 0.85;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  
+  &::before {
+    content: '';
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background-color: $success-color;
+  }
+  
+  &.is-offline::before {
+    background-color: $text-muted;
+  }
+}
+
+.#{$prefix}-header-actions {
+  display: flex;
+  gap: $spacing-sm;
+}
+
+.#{$prefix}-header-btn {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  border: none;
+  background-color: transparent;
+  color: $text-light;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background-color $transition-fast;
+  
+  &:hover {
+    background-color: rgba(255, 255, 255, 0.15);
+  }
+  
+  svg {
+    width: 18px;
+    height: 18px;
+  }
+}
+
+// Body / Message List
+.#{$prefix}-body {
+  flex: 1;
+  overflow-y: auto;
+  padding: $spacing-lg;
+  display: flex;
+  flex-direction: column;
+  gap: $spacing-md;
+  background-color: $bg-light;
+}
+
+// Pre-chat Form
+.#{$prefix}-prechat {
+  padding: $spacing-xl;
+  display: flex;
+  flex-direction: column;
+  gap: $spacing-lg;
+  background-color: $bg-white;
+  flex: 1;
+}
+
+.#{$prefix}-prechat-greeting {
+  text-align: center;
+  color: $text-secondary;
+  font-size: $font-size-base;
+  padding-bottom: $spacing-lg;
+  border-bottom: 1px solid $border-color;
+}
+
+.#{$prefix}-form-group {
+  display: flex;
+  flex-direction: column;
+  gap: $spacing-xs;
+}
+
+.#{$prefix}-form-label {
+  font-size: $font-size-sm;
+  font-weight: 500;
+  color: $text-secondary;
+}
+
+.#{$prefix}-form-input {
+  width: 100%;
+  padding: $spacing-md;
+  border: 1px solid $border-color;
+  border-radius: $border-radius;
+  font-size: $font-size-base;
+  font-family: inherit;
+  transition: border-color $transition-fast, box-shadow $transition-fast;
+  
+  &:focus {
+    outline: none;
+    border-color: $primary-color;
+    box-shadow: 0 0 0 2px rgba($primary-color, 0.15);
+  }
+  
+  &::placeholder {
+    color: $text-muted;
+  }
+}
+
+.#{$prefix}-form-textarea {
+  resize: vertical;
+  min-height: 80px;
+}
+
+.#{$prefix}-form-submit {
+  width: 100%;
+  padding: $spacing-md $spacing-lg;
+  background-color: $primary-color;
+  color: $text-light;
+  border: none;
+  border-radius: $border-radius;
+  font-size: $font-size-base;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background-color $transition-fast;
+  margin-top: $spacing-md;
+  
+  &:hover:not(:disabled) {
+    background-color: $primary-dark;
+  }
+  
+  &:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+  }
+}
+
+// Messages
+.#{$prefix}-message {
+  display: flex;
+  flex-direction: column;
+  max-width: 85%;
+  animation: sd-slide-up 0.2s ease;
+  
+  &.is-visitor {
+    align-self: flex-end;
+    
+    .#{$prefix}-message-bubble {
+      background-color: $primary-color;
+      color: $text-light;
+      border-bottom-right-radius: 4px;
+    }
+    
+    .#{$prefix}-message-time {
+      text-align: right;
+    }
+  }
+  
+  &.is-agent {
+    align-self: flex-start;
+    
+    .#{$prefix}-message-bubble {
+      background-color: $bg-white;
+      color: $text-primary;
+      border-bottom-left-radius: 4px;
+    }
+  }
+  
+  &.is-system {
+    align-self: center;
+    max-width: 90%;
+    
+    .#{$prefix}-message-bubble {
+      background-color: $message-system-bg;
+      color: $text-secondary;
+      font-size: $font-size-sm;
+      text-align: center;
+    }
+  }
+}
+
+.#{$prefix}-message-wrapper {
+  display: flex;
+  align-items: flex-end;
+  gap: $spacing-sm;
+}
+
+.#{$prefix}-message-avatar {
+  width: $avatar-size-small;
+  height: $avatar-size-small;
+  border-radius: 50%;
+  background-color: $secondary-color;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  
+  svg {
+    width: 14px;
+    height: 14px;
+    color: $text-light;
+  }
+  
+  img {
+    width: 100%;
+    height: 100%;
+    border-radius: 50%;
+    object-fit: cover;
+  }
+}
+
+.#{$prefix}-message-bubble {
+  padding: $spacing-md;
+  border-radius: $border-radius-large;
+  word-wrap: break-word;
+  white-space: pre-wrap;
+  box-shadow: $shadow-small;
+}
+
+.#{$prefix}-message-time {
+  font-size: $font-size-xs;
+  color: $text-muted;
+  padding: 2px $spacing-sm 0;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.#{$prefix}-message-status {
+  display: flex;
+  align-items: center;
+  
+  svg {
+    width: 12px;
+    height: 12px;
+  }
+}
+
+// Attachment in message
+.#{$prefix}-message-attachment {
+  display: flex;
+  align-items: center;
+  gap: $spacing-sm;
+  padding: $spacing-sm;
+  background-color: rgba(0, 0, 0, 0.05);
+  border-radius: $border-radius;
+  margin-top: $spacing-sm;
+  text-decoration: none;
+  color: inherit;
+  
+  &:hover {
+    background-color: rgba(0, 0, 0, 0.1);
+  }
+  
+  svg {
+    width: 20px;
+    height: 20px;
+    flex-shrink: 0;
+  }
+}
+
+.#{$prefix}-message-attachment-name {
+  font-size: $font-size-sm;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+// Typing indicator
+.#{$prefix}-typing {
+  display: flex;
+  align-items: center;
+  gap: $spacing-sm;
+  padding: $spacing-sm $spacing-md;
+  background-color: $bg-white;
+  border-radius: $border-radius-large;
+  align-self: flex-start;
+  box-shadow: $shadow-small;
+}
+
+.#{$prefix}-typing-dots {
+  display: flex;
+  gap: 4px;
+  
+  span {
+    width: 6px;
+    height: 6px;
+    background-color: $text-muted;
+    border-radius: 50%;
+    
+    &:nth-child(1) { animation: sd-typing-dot 1.4s infinite 0s; }
+    &:nth-child(2) { animation: sd-typing-dot 1.4s infinite 0.2s; }
+    &:nth-child(3) { animation: sd-typing-dot 1.4s infinite 0.4s; }
+  }
+}
+
+.#{$prefix}-typing-text {
+  font-size: $font-size-sm;
+  color: $text-muted;
+}
+
+// Date separator
+.#{$prefix}-date-separator {
+  display: flex;
+  align-items: center;
+  gap: $spacing-md;
+  color: $text-muted;
+  font-size: $font-size-xs;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  
+  &::before,
+  &::after {
+    content: '';
+    flex: 1;
+    height: 1px;
+    background-color: $border-color;
+  }
+}
+
+// Input area
+.#{$prefix}-input {
+  min-height: $input-height;
+  border-top: 1px solid $border-color;
+  background-color: $bg-white;
+  display: flex;
+  align-items: flex-end;
+  padding: $spacing-sm $spacing-md;
+  gap: $spacing-sm;
+}
+
+.#{$prefix}-input-textarea {
+  flex: 1;
+  border: none;
+  outline: none;
+  resize: none;
+  font-family: inherit;
+  font-size: $font-size-base;
+  line-height: 1.5;
+  max-height: 120px;
+  padding: $spacing-sm;
+  background-color: $bg-light;
+  border-radius: $border-radius;
+  
+  &::placeholder {
+    color: $text-muted;
+  }
+}
+
+.#{$prefix}-input-btn {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  border: none;
+  background-color: transparent;
+  color: $text-muted;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all $transition-fast;
+  flex-shrink: 0;
+  
+  &:hover:not(:disabled) {
+    color: $primary-color;
+    background-color: rgba($primary-color, 0.1);
+  }
+  
+  &:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
+  
+  &.is-primary {
+    background-color: $primary-color;
+    color: $text-light;
+    
+    &:hover:not(:disabled) {
+      background-color: $primary-dark;
+    }
+  }
+  
+  svg {
+    width: 20px;
+    height: 20px;
+  }
+}
+
+// File upload drop zone
+.#{$prefix}-dropzone {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba($primary-color, 0.1);
+  border: 2px dashed $primary-color;
+  border-radius: $border-radius-large;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity $transition-fast;
+  z-index: 10;
+  
+  &.is-active {
+    opacity: 1;
+    pointer-events: auto;
+  }
+}
+
+.#{$prefix}-dropzone-text {
+  font-size: $font-size-lg;
+  color: $primary-color;
+  font-weight: 500;
+}
+
+// File preview
+.#{$prefix}-file-preview {
+  display: flex;
+  align-items: center;
+  gap: $spacing-sm;
+  padding: $spacing-sm $spacing-md;
+  background-color: $bg-light;
+  border-radius: $border-radius;
+  margin-bottom: $spacing-sm;
+}
+
+.#{$prefix}-file-preview-name {
+  flex: 1;
+  font-size: $font-size-sm;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.#{$prefix}-file-preview-remove {
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  border: none;
+  background-color: transparent;
+  color: $text-muted;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  
+  &:hover {
+    color: $error-color;
+    background-color: rgba($error-color, 0.1);
+  }
+  
+  svg {
+    width: 14px;
+    height: 14px;
+  }
+}
+
+// Loading spinner
+.#{$prefix}-spinner {
+  width: 20px;
+  height: 20px;
+  border: 2px solid $border-color;
+  border-top-color: $primary-color;
+  border-radius: 50%;
+  animation: sd-spinner 0.8s linear infinite;
+}
+
+// Error state
+.#{$prefix}-error {
+  padding: $spacing-lg;
+  text-align: center;
+  color: $error-color;
+  
+  svg {
+    width: 48px;
+    height: 48px;
+    margin-bottom: $spacing-md;
+  }
+}
+
+// Empty state
+.#{$prefix}-empty {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: $spacing-xl;
+  text-align: center;
+  color: $text-muted;
+  
+  svg {
+    width: 64px;
+    height: 64px;
+    margin-bottom: $spacing-md;
+    opacity: 0.5;
+  }
+}
+
+// Hidden file input
+.#{$prefix}-file-input {
+  display: none;
+}
+
+// Notification sound toggle
+.#{$prefix}-sound-toggle {
+  opacity: 0.7;
+  
+  &:hover {
+    opacity: 1;
+  }
+}

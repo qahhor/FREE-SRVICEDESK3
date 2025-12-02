@@ -1,0 +1,24 @@
+package io.greenwhite.servicedesk.ticket.repository;
+
+import io.greenwhite.servicedesk.common.enums.EscalationType;
+import io.greenwhite.servicedesk.ticket.model.SlaEscalation;
+import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.stereotype.Repository;
+
+import java.util.List;
+import java.util.UUID;
+
+/**
+ * Repository for SlaEscalation entity
+ */
+@Repository
+public interface SlaEscalationRepository extends JpaRepository<SlaEscalation, UUID> {
+
+    List<SlaEscalation> findByPolicyId(UUID policyId);
+
+    List<SlaEscalation> findByPolicyIdAndActiveTrue(UUID policyId);
+
+    List<SlaEscalation> findByPolicyIdAndType(UUID policyId, EscalationType type);
+
+    List<SlaEscalation> findByPolicyIdAndTypeAndActiveTrue(UUID policyId, EscalationType type);
+}

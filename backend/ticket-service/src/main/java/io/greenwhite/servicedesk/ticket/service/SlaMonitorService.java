@@ -16,7 +16,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.time.Duration;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
@@ -35,6 +34,11 @@ public class SlaMonitorService {
     private final SlaCalculatorService calculatorService;
 
     private static final Set<TicketStatus> ACTIVE_STATUSES = Set.of(
+            TicketStatus.NEW, TicketStatus.OPEN, TicketStatus.IN_PROGRESS,
+            TicketStatus.PENDING, TicketStatus.REOPENED
+    );
+
+    private static final List<TicketStatus> ACTIVE_STATUSES_LIST = List.of(
             TicketStatus.NEW, TicketStatus.OPEN, TicketStatus.IN_PROGRESS,
             TicketStatus.PENDING, TicketStatus.REOPENED
     );
@@ -93,33 +97,8 @@ public class SlaMonitorService {
      * @return List of tickets approaching breach
      */
     public List<Ticket> getTicketsApproachingBreach(int warningMinutes) {
-        List<Ticket> allTickets = ticketRepository.findAll();
-        List<Ticket> approachingBreach = new ArrayList<>();
         LocalDateTime warningThreshold = LocalDateTime.now().plusMinutes(warningMinutes);
-
-        for (Ticket ticket : allTickets) {
-            if (!ACTIVE_STATUSES.contains(ticket.getStatus())) {
-                continue;
-            }
-
-            // Check first response
-            if (ticket.getFirstResponseAt() == null &&
-                    ticket.getSlaFirstResponseDue() != null &&
-                    !ticket.getSlaFirstResponseBreached() &&
-                    ticket.getSlaFirstResponseDue().isBefore(warningThreshold)) {
-                approachingBreach.add(ticket);
-                continue;
-            }
-
-            // Check resolution
-            if (ticket.getSlaResolutionDue() != null &&
-                    !ticket.getSlaResolutionBreached() &&
-                    ticket.getSlaResolutionDue().isBefore(warningThreshold)) {
-                approachingBreach.add(ticket);
-            }
-        }
-
-        return approachingBreach;
+        return ticketRepository.findTicketsApproachingSla(ACTIVE_STATUSES_LIST, warningThreshold);
     }
 
     /**
@@ -128,29 +107,7 @@ public class SlaMonitorService {
      * @return List of breached tickets
      */
     public List<Ticket> getBreachedTickets() {
-        List<Ticket> allTickets = ticketRepository.findAll();
-        List<Ticket> breached = new ArrayList<>();
-        LocalDateTime now = LocalDateTime.now();
-
-        for (Ticket ticket : allTickets) {
-            if (!ACTIVE_STATUSES.contains(ticket.getStatus())) {
-                continue;
-            }
-
-            boolean isBreached = ticket.getSlaFirstResponseBreached() ||
-                    ticket.getSlaResolutionBreached() ||
-                    (ticket.getFirstResponseAt() == null &&
-                            ticket.getSlaFirstResponseDue() != null &&
-                            now.isAfter(ticket.getSlaFirstResponseDue())) ||
-                    (ticket.getSlaResolutionDue() != null &&
-                            now.isAfter(ticket.getSlaResolutionDue()));
-
-            if (isBreached) {
-                breached.add(ticket);
-            }
-        }
-
-        return breached;
+        return ticketRepository.findBreachedTickets(ACTIVE_STATUSES_LIST, LocalDateTime.now());
     }
 
     /**
@@ -249,32 +206,29 @@ public class SlaMonitorService {
     }
 
     /**
-     * Get SLA metrics for dashboard
+     * Get SLA metrics for dashboard using optimized database queries
      *
      * @return SLA metrics
      */
     public SlaMetricsResponse getSlaMetrics() {
-        List<Ticket> allTickets = ticketRepository.findAll();
+        // Use optimized count queries for compliance rates
+        long totalWithSla = ticketRepository.countTicketsWithSlaPolicy();
+        long firstResponseTotal = ticketRepository.countTicketsWithFirstResponseSla();
+        long resolutionTotal = ticketRepository.countTicketsWithResolutionSla();
+        long firstResponseCompliant = ticketRepository.countFirstResponseCompliant();
+        long resolutionCompliant = ticketRepository.countResolutionCompliant();
         
-        long totalWithSla = 0;
+        // For status counts, we still need to iterate but only over tickets with SLA
+        List<Ticket> ticketsWithSla = ticketRepository.findTicketsWithSlaPolicy();
         long onTrack = 0;
         long warning = 0;
         long breached = 0;
-        long firstResponseCompliant = 0;
-        long firstResponseTotal = 0;
-        long resolutionCompliant = 0;
-        long resolutionTotal = 0;
         long totalFirstResponseMinutes = 0;
         long firstResponseCount = 0;
         long totalResolutionMinutes = 0;
         long resolutionCount = 0;
 
-        for (Ticket ticket : allTickets) {
-            if (ticket.getSlaPolicy() == null) {
-                continue;
-            }
-            totalWithSla++;
-
+        for (Ticket ticket : ticketsWithSla) {
             SlaStatus status = checkTicketSla(ticket);
             switch (status) {
                 case ON_TRACK -> onTrack++;
@@ -282,34 +236,16 @@ public class SlaMonitorService {
                 case BREACHED -> breached++;
             }
 
-            // First response compliance
-            if (ticket.getSlaFirstResponseDue() != null) {
-                firstResponseTotal++;
-                if (!ticket.getSlaFirstResponseBreached() &&
-                        (ticket.getFirstResponseAt() == null ||
-                                !ticket.getFirstResponseAt().isAfter(ticket.getSlaFirstResponseDue()))) {
-                    firstResponseCompliant++;
-                }
-                if (ticket.getFirstResponseAt() != null) {
-                    totalFirstResponseMinutes += Duration.between(
-                            ticket.getCreatedAt(), ticket.getFirstResponseAt()).toMinutes();
-                    firstResponseCount++;
-                }
+            // Calculate average response times
+            if (ticket.getFirstResponseAt() != null && ticket.getCreatedAt() != null) {
+                totalFirstResponseMinutes += Duration.between(
+                        ticket.getCreatedAt(), ticket.getFirstResponseAt()).toMinutes();
+                firstResponseCount++;
             }
-
-            // Resolution compliance
-            if (ticket.getSlaResolutionDue() != null) {
-                resolutionTotal++;
-                if (!ticket.getSlaResolutionBreached() &&
-                        (ticket.getResolvedAt() == null ||
-                                !ticket.getResolvedAt().isAfter(ticket.getSlaResolutionDue()))) {
-                    resolutionCompliant++;
-                }
-                if (ticket.getResolvedAt() != null) {
-                    totalResolutionMinutes += Duration.between(
-                            ticket.getCreatedAt(), ticket.getResolvedAt()).toMinutes();
-                    resolutionCount++;
-                }
+            if (ticket.getResolvedAt() != null && ticket.getCreatedAt() != null) {
+                totalResolutionMinutes += Duration.between(
+                        ticket.getCreatedAt(), ticket.getResolvedAt()).toMinutes();
+                resolutionCount++;
             }
         }
 

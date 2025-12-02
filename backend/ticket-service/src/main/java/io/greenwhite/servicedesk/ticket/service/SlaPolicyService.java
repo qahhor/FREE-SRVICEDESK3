@@ -160,8 +160,8 @@ public class SlaPolicyService {
 
         // Update priorities
         if (request.getPriorities() != null) {
-            // Delete existing priorities
-            priorityRepository.deleteAll(priorityRepository.findByPolicyId(id));
+            // Delete existing priorities using bulk delete
+            priorityRepository.deleteByPolicyId(id);
 
             // Create new priorities
             for (SlaPolicyRequest.SlaPriorityRequest priorityRequest : request.getPriorities()) {
@@ -190,10 +190,10 @@ public class SlaPolicyService {
                 .orElseThrow(() -> new ResourceNotFoundException("SLA Policy not found with id: " + id));
 
         // Delete related priorities
-        priorityRepository.deleteAll(priorityRepository.findByPolicyId(id));
+        priorityRepository.deleteByPolicyId(id);
 
         // Delete related escalations
-        escalationRepository.deleteAll(escalationRepository.findByPolicyId(id));
+        escalationRepository.deleteByPolicyId(id);
 
         policyRepository.delete(policy);
         log.info("Deleted SLA Policy: {}", policy.getName());

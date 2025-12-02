@@ -18,10 +18,15 @@ public interface SlaHolidayRepository extends JpaRepository<SlaHoliday, UUID> {
 
     List<SlaHoliday> findByBusinessHoursId(UUID businessHoursId);
 
-    @Query("SELECT h FROM SlaHoliday h WHERE h.businessHours.id = :businessHoursId " +
-           "AND (h.date = :date OR (h.recurring = true AND " +
-           "FUNCTION('EXTRACT', MONTH, h.date) = FUNCTION('EXTRACT', MONTH, :date) AND " +
-           "FUNCTION('EXTRACT', DAY, h.date) = FUNCTION('EXTRACT', DAY, :date)))")
+    /**
+     * Find holidays by business hours ID and date, including recurring holidays.
+     * Uses native query for date extraction as JPQL date functions vary by database.
+     */
+    @Query(value = "SELECT * FROM sla_holidays h WHERE h.business_hours_id = :businessHoursId " +
+           "AND (h.holiday_date = :date OR (h.recurring = true AND " +
+           "EXTRACT(MONTH FROM h.holiday_date) = EXTRACT(MONTH FROM CAST(:date AS DATE)) AND " +
+           "EXTRACT(DAY FROM h.holiday_date) = EXTRACT(DAY FROM CAST(:date AS DATE))))",
+           nativeQuery = true)
     List<SlaHoliday> findByBusinessHoursIdAndDate(
             @Param("businessHoursId") UUID businessHoursId,
             @Param("date") LocalDate date);

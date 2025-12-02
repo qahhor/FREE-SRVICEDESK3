@@ -300,7 +300,6 @@ public class SlaCalculatorService {
         return !holidays.isEmpty();
     }
 
-    @SuppressWarnings("unchecked")
     private Map<String, Map<String, String>> parseSchedule(String scheduleJson) {
         try {
             return objectMapper.readValue(scheduleJson,

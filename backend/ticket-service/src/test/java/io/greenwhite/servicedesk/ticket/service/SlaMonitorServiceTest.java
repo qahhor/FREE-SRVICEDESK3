@@ -204,20 +204,8 @@ class SlaMonitorServiceTest {
         ticket.setSlaFirstResponseDue(LocalDateTime.now().plusMinutes(30));
         ticket.setSlaFirstResponseBreached(false);
 
-        Ticket ticket2 = Ticket.builder()
-                .ticketNumber("TEST-2")
-                .subject("Test Ticket 2")
-                .status(TicketStatus.OPEN)
-                .priority(TicketPriority.HIGH)
-                .project(project)
-                .build();
-        ticket2.setId(UUID.randomUUID());
-        ticket2.setSlaPolicy(slaPolicy);
-        ticket2.setSlaFirstResponseDue(LocalDateTime.now().plusMinutes(90)); // Not approaching
-        ticket2.setFirstResponseAt(LocalDateTime.now()); // Already responded
-        ticket2.setSlaFirstResponseBreached(false);
-
-        when(ticketRepository.findAll()).thenReturn(List.of(ticket, ticket2));
+        when(ticketRepository.findTicketsApproachingSla(any(), any()))
+                .thenReturn(List.of(ticket));
 
         // When
         List<Ticket> approachingBreach = monitorService.getTicketsApproachingBreach(60);
@@ -237,19 +225,8 @@ class SlaMonitorServiceTest {
         ticket.setFirstResponseAt(null);
         ticket.setSlaFirstResponseBreached(false);
 
-        Ticket ticket2 = Ticket.builder()
-                .ticketNumber("TEST-2")
-                .subject("Test Ticket 2")
-                .status(TicketStatus.OPEN)
-                .priority(TicketPriority.HIGH)
-                .project(project)
-                .build();
-        ticket2.setId(UUID.randomUUID());
-        ticket2.setSlaPolicy(slaPolicy);
-        ticket2.setSlaFirstResponseDue(LocalDateTime.now().plusMinutes(60)); // Not breached
-        ticket2.setSlaFirstResponseBreached(false);
-
-        when(ticketRepository.findAll()).thenReturn(List.of(ticket, ticket2));
+        when(ticketRepository.findBreachedTickets(any(), any()))
+                .thenReturn(List.of(ticket));
 
         // When
         List<Ticket> breachedTickets = monitorService.getBreachedTickets();
@@ -357,7 +334,13 @@ class SlaMonitorServiceTest {
         resolvedTicket.setSlaFirstResponseBreached(false);
         resolvedTicket.setSlaResolutionBreached(false);
 
-        when(ticketRepository.findAll()).thenReturn(List.of(ticket, resolvedTicket));
+        // Mock the optimized repository methods
+        when(ticketRepository.countTicketsWithSlaPolicy()).thenReturn(2L);
+        when(ticketRepository.countTicketsWithFirstResponseSla()).thenReturn(2L);
+        when(ticketRepository.countTicketsWithResolutionSla()).thenReturn(2L);
+        when(ticketRepository.countFirstResponseCompliant()).thenReturn(2L);
+        when(ticketRepository.countResolutionCompliant()).thenReturn(2L);
+        when(ticketRepository.findTicketsWithSlaPolicy()).thenReturn(List.of(ticket, resolvedTicket));
 
         // When
         SlaMetricsResponse metrics = monitorService.getSlaMetrics();

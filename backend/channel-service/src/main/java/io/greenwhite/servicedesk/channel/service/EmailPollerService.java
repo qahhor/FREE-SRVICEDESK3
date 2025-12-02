@@ -6,6 +6,7 @@ import io.greenwhite.servicedesk.channel.repository.EmailMessageRepository;
 import jakarta.mail.*;
 import jakarta.mail.internet.InternetAddress;
 import jakarta.mail.internet.MimeMultipart;
+import jakarta.mail.search.FlagTerm;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.scheduling.annotation.Scheduled;

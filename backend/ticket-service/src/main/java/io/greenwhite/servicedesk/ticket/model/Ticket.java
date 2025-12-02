@@ -93,6 +93,35 @@ public class Ticket extends BaseEntity {
     @Column(nullable = false)
     private Boolean isPublic = true;
 
+    // SLA tracking fields
+    @ManyToOne
+    @JoinColumn(name = "sla_policy_id")
+    private SlaPolicy slaPolicy;
+
+    @Column(name = "sla_first_response_due")
+    private LocalDateTime slaFirstResponseDue;
+
+    @Column(name = "sla_resolution_due")
+    private LocalDateTime slaResolutionDue;
+
+    @Column(name = "sla_next_response_due")
+    private LocalDateTime slaNextResponseDue;
+
+    @Column(name = "sla_first_response_breached", nullable = false)
+    @Builder.Default
+    private Boolean slaFirstResponseBreached = false;
+
+    @Column(name = "sla_resolution_breached", nullable = false)
+    @Builder.Default
+    private Boolean slaResolutionBreached = false;
+
+    @Column(name = "sla_paused_at")
+    private LocalDateTime slaPausedAt;
+
+    @Column(name = "sla_paused_minutes")
+    @Builder.Default
+    private Integer slaPausedMinutes = 0;
+
     /**
      * Generate ticket number in format: PROJECT-NUMBER
      */

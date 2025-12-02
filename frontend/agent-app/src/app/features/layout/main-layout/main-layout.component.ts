@@ -8,9 +8,11 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatButtonModule } from '@angular/material/button';
 import { MatMenuModule } from '@angular/material/menu';
 import { MatBadgeModule } from '@angular/material/badge';
+import { MatDividerModule } from '@angular/material/divider';
 
 import { AuthService } from '../../../core/services/auth.service';
 import { WebSocketService } from '../../../core/services/websocket.service';
+import { NotificationBellComponent } from '../../../shared/components/notification-bell/notification-bell.component';
 
 @Component({
   selector: 'app-main-layout',
@@ -24,7 +26,9 @@ import { WebSocketService } from '../../../core/services/websocket.service';
     MatIconModule,
     MatButtonModule,
     MatMenuModule,
-    MatBadgeModule
+    MatBadgeModule,
+    MatDividerModule,
+    NotificationBellComponent
   ],
   templateUrl: './main-layout.component.html',
   styleUrls: ['./main-layout.component.scss']
@@ -37,8 +41,10 @@ export class MainLayoutComponent implements OnInit, OnDestroy {
   ) {}
 
   ngOnInit(): void {
-    // Connect to WebSocket for real-time updates
-    this.websocketService.connect();
+    // Connect to WebSocket for real-time updates with user ID
+    const currentUser = this.authService.currentUser();
+    const userId = currentUser?.id;
+    this.websocketService.connect(userId);
   }
 
   ngOnDestroy(): void {

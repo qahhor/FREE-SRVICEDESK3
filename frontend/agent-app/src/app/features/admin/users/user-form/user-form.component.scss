@@ -1,0 +1,94 @@
+.user-form-container {
+  max-width: 900px;
+  margin: 0 auto;
+
+  .header {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 24px;
+
+    h1 {
+      margin: 0;
+      font-size: 24px;
+      font-weight: 500;
+    }
+  }
+
+  .loading-spinner {
+    display: flex;
+    justify-content: center;
+    padding: 48px;
+  }
+
+  .form-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 32px;
+  }
+
+  .form-section {
+    h3 {
+      margin: 0 0 16px 0;
+      font-size: 16px;
+      font-weight: 500;
+      color: rgba(0, 0, 0, 0.7);
+      padding-bottom: 8px;
+      border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+    }
+  }
+
+  .full-width {
+    width: 100%;
+  }
+
+  .password-strength {
+    margin-top: -12px;
+    margin-bottom: 16px;
+
+    .strength-label {
+      display: block;
+      font-size: 12px;
+      color: rgba(0, 0, 0, 0.6);
+      margin-top: 4px;
+    }
+  }
+
+  .toggle-field {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    padding: 16px 0;
+
+    .hint {
+      font-size: 12px;
+      color: rgba(0, 0, 0, 0.6);
+    }
+  }
+
+  .form-actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 12px;
+    padding-top: 24px;
+    margin-top: 24px;
+    border-top: 1px solid rgba(0, 0, 0, 0.1);
+
+    button {
+      min-width: 120px;
+    }
+
+    mat-spinner {
+      display: inline-block;
+    }
+  }
+}
+
+// Responsive styles
+@media (max-width: 768px) {
+  .user-form-container {
+    .form-grid {
+      grid-template-columns: 1fr;
+    }
+  }
+}

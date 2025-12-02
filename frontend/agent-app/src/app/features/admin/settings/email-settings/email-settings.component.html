@@ -1,0 +1,111 @@
+<div class="email-settings">
+  <h1>Email Settings</h1>
+
+  @if (loading()) {
+    <div class="loading-spinner">
+      <mat-spinner></mat-spinner>
+    </div>
+  } @else {
+    <mat-card>
+      <mat-card-content>
+        <form [formGroup]="emailForm" (ngSubmit)="onSubmit()">
+          <!-- SMTP Configuration -->
+          <div class="section">
+            <h3>SMTP Configuration</h3>
+
+            <div class="form-row">
+              <mat-form-field appearance="outline" class="host-field">
+                <mat-label>SMTP Host</mat-label>
+                <input matInput formControlName="smtpHost" placeholder="smtp.example.com">
+                @if (emailForm.get('smtpHost')?.invalid && emailForm.get('smtpHost')?.touched) {
+                  <mat-error>SMTP host is required</mat-error>
+                }
+              </mat-form-field>
+
+              <mat-form-field appearance="outline" class="port-field">
+                <mat-label>Port</mat-label>
+                <input matInput type="number" formControlName="smtpPort" min="1" max="65535">
+              </mat-form-field>
+            </div>
+
+            <div class="form-row">
+              <mat-form-field appearance="outline">
+                <mat-label>Username</mat-label>
+                <input matInput formControlName="smtpUsername" placeholder="your-username">
+              </mat-form-field>
+
+              <mat-form-field appearance="outline">
+                <mat-label>Password</mat-label>
+                <input
+                  matInput
+                  formControlName="smtpPassword"
+                  [type]="showPassword() ? 'text' : 'password'"
+                  placeholder="Enter password">
+                <button mat-icon-button matSuffix type="button" (click)="togglePasswordVisibility()">
+                  <mat-icon>{{ showPassword() ? 'visibility_off' : 'visibility' }}</mat-icon>
+                </button>
+                <mat-hint>Leave blank to keep existing password</mat-hint>
+              </mat-form-field>
+            </div>
+
+            <div class="toggle-field">
+              <mat-slide-toggle formControlName="smtpSecure">Use SSL/TLS</mat-slide-toggle>
+              <span class="hint">Enable secure connection (recommended)</span>
+            </div>
+          </div>
+
+          <!-- Sender Information -->
+          <div class="section">
+            <h3>Sender Information</h3>
+
+            <div class="form-row">
+              <mat-form-field appearance="outline">
+                <mat-label>From Email</mat-label>
+                <input matInput formControlName="fromEmail" type="email" placeholder="support@example.com">
+                @if (emailForm.get('fromEmail')?.invalid && emailForm.get('fromEmail')?.touched) {
+                  <mat-error>Valid email is required</mat-error>
+                }
+              </mat-form-field>
+
+              <mat-form-field appearance="outline">
+                <mat-label>From Name</mat-label>
+                <input matInput formControlName="fromName" placeholder="Support Team">
+                @if (emailForm.get('fromName')?.invalid && emailForm.get('fromName')?.touched) {
+                  <mat-error>From name is required</mat-error>
+                }
+              </mat-form-field>
+            </div>
+          </div>
+
+          <!-- Form Actions -->
+          <div class="form-actions">
+            <button
+              mat-stroked-button
+              type="button"
+              (click)="testEmailSettings()"
+              [disabled]="testing() || emailForm.invalid">
+              @if (testing()) {
+                <mat-spinner diameter="20"></mat-spinner>
+              } @else {
+                <mat-icon>send</mat-icon>
+                Send Test Email
+              }
+            </button>
+
+            <button
+              mat-raised-button
+              color="primary"
+              type="submit"
+              [disabled]="saving() || emailForm.invalid">
+              @if (saving()) {
+                <mat-spinner diameter="20"></mat-spinner>
+              } @else {
+                Save Settings
+              }
+            </button>
+          </div>
+        </form>
+      </mat-card-content>
+    </mat-card>
+  }
+</div>

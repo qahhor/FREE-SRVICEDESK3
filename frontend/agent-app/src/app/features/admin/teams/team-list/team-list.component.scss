@@ -1,0 +1,96 @@
+.team-list {
+  .header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 24px;
+
+    h1 {
+      margin: 0;
+      font-size: 28px;
+      font-weight: 500;
+    }
+  }
+
+  .filters-card {
+    margin-bottom: 16px;
+
+    .filters {
+      display: flex;
+      gap: 16px;
+      align-items: center;
+
+      .search-field {
+        flex: 1;
+        max-width: 400px;
+      }
+    }
+  }
+
+  .loading-spinner {
+    display: flex;
+    justify-content: center;
+    padding: 48px;
+  }
+
+  .table-container {
+    overflow-x: auto;
+  }
+
+  table {
+    width: 100%;
+  }
+
+  .team-link {
+    color: #6366f1;
+    text-decoration: none;
+    font-weight: 500;
+
+    &:hover {
+      text-decoration: underline;
+    }
+  }
+
+  .members-badge {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 32px;
+    height: 24px;
+    padding: 0 8px;
+    border-radius: 12px;
+    background-color: #e3f2fd;
+    color: #1976d2;
+    font-weight: 500;
+    font-size: 13px;
+  }
+
+  .no-data {
+    text-align: center;
+    padding: 24px;
+    color: rgba(0, 0, 0, 0.5);
+  }
+
+  .delete-action {
+    color: #f44336;
+  }
+}
+
+@media (max-width: 768px) {
+  .team-list {
+    .header {
+      flex-direction: column;
+      gap: 16px;
+      align-items: flex-start;
+    }
+
+    .filters-card .filters {
+      flex-direction: column;
+      align-items: stretch;
+
+      .search-field {
+        max-width: 100%;
+      }
+    }
+  }
+}

@@ -1,0 +1,105 @@
+<div class="general-settings">
+  <h1>General Settings</h1>
+
+  @if (loading()) {
+    <div class="loading-spinner">
+      <mat-spinner></mat-spinner>
+    </div>
+  } @else {
+    <mat-card>
+      <mat-card-content>
+        <form [formGroup]="settingsForm" (ngSubmit)="onSubmit()">
+          <!-- Company Information -->
+          <div class="section">
+            <h3>Company Information</h3>
+
+            <mat-form-field appearance="outline" class="full-width">
+              <mat-label>Company Name</mat-label>
+              <input matInput formControlName="companyName" placeholder="Enter company name">
+              @if (settingsForm.get('companyName')?.invalid && settingsForm.get('companyName')?.touched) {
+                <mat-error>Company name is required</mat-error>
+              }
+            </mat-form-field>
+
+            <mat-form-field appearance="outline" class="full-width">
+              <mat-label>Company Logo URL</mat-label>
+              <input matInput formControlName="companyLogo" placeholder="https://example.com/logo.png">
+              <mat-hint>URL to your company logo image</mat-hint>
+            </mat-form-field>
+          </div>
+
+          <!-- Regional Settings -->
+          <div class="section">
+            <h3>Regional Settings</h3>
+
+            <div class="form-row">
+              <mat-form-field appearance="outline">
+                <mat-label>Default Language</mat-label>
+                <mat-select formControlName="defaultLanguage">
+                  @for (lang of languages; track lang.code) {
+                    <mat-option [value]="lang.code">{{ lang.name }}</mat-option>
+                  }
+                </mat-select>
+              </mat-form-field>
+
+              <mat-form-field appearance="outline">
+                <mat-label>Timezone</mat-label>
+                <mat-select formControlName="timezone">
+                  @for (tz of timezones; track tz) {
+                    <mat-option [value]="tz">{{ tz }}</mat-option>
+                  }
+                </mat-select>
+              </mat-form-field>
+            </div>
+
+            <div class="form-row">
+              <mat-form-field appearance="outline">
+                <mat-label>Date Format</mat-label>
+                <mat-select formControlName="dateFormat">
+                  @for (format of dateFormats; track format.value) {
+                    <mat-option [value]="format.value">{{ format.label }}</mat-option>
+                  }
+                </mat-select>
+              </mat-form-field>
+
+              <mat-form-field appearance="outline">
+                <mat-label>Time Format</mat-label>
+                <mat-select formControlName="timeFormat">
+                  @for (format of timeFormats; track format.value) {
+                    <mat-option [value]="format.value">{{ format.label }}</mat-option>
+                  }
+                </mat-select>
+              </mat-form-field>
+            </div>
+          </div>
+
+          <!-- Display Settings -->
+          <div class="section">
+            <h3>Display Settings</h3>
+
+            <mat-form-field appearance="outline">
+              <mat-label>Default Page Size</mat-label>
+              <input matInput type="number" formControlName="paginationDefault" min="10" max="100">
+              <mat-hint>Number of items per page (10-100)</mat-hint>
+            </mat-form-field>
+          </div>
+
+          <!-- Form Actions -->
+          <div class="form-actions">
+            <button
+              mat-raised-button
+              color="primary"
+              type="submit"
+              [disabled]="saving() || settingsForm.invalid">
+              @if (saving()) {
+                <mat-spinner diameter="20"></mat-spinner>
+              } @else {
+                Save Settings
+              }
+            </button>
+          </div>
+        </form>
+      </mat-card-content>
+    </mat-card>
+  }
+</div>

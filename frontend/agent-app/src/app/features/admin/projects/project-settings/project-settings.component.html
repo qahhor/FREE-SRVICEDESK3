@@ -1,0 +1,152 @@
+<div class="project-settings">
+  <div class="header">
+    <button mat-icon-button (click)="goBack()">
+      <mat-icon>arrow_back</mat-icon>
+    </button>
+    <h1>Project Settings</h1>
+  </div>
+
+  @if (loading()) {
+    <div class="loading-spinner">
+      <mat-spinner></mat-spinner>
+    </div>
+  } @else if (project(); as currentProject) {
+    <mat-card class="project-header-card">
+      <mat-card-content>
+        <div class="project-info">
+          <span class="project-key">{{ currentProject.key }}</span>
+          <h2>{{ currentProject.name }}</h2>
+        </div>
+      </mat-card-content>
+    </mat-card>
+
+    <mat-card>
+      <mat-card-content>
+        <mat-tab-group>
+          <!-- General Settings -->
+          <mat-tab label="General">
+            <div class="tab-content">
+              <form [formGroup]="generalForm">
+                <h3>Default Assignment</h3>
+
+                <mat-form-field appearance="outline" class="full-width">
+                  <mat-label>Default Team</mat-label>
+                  <mat-select formControlName="defaultTeamId">
+                    <mat-option [value]="null">No default team</mat-option>
+                    @for (team of teams(); track team.id) {
+                      <mat-option [value]="team.id">{{ team.name }}</mat-option>
+                    }
+                  </mat-select>
+                  <mat-hint>New tickets will be assigned to this team</mat-hint>
+                </mat-form-field>
+
+                <div class="toggle-field">
+                  <mat-slide-toggle formControlName="autoAssign">Auto-assign tickets</mat-slide-toggle>
+                  <span class="hint">Automatically assign tickets to team members based on workload</span>
+                </div>
+
+                <mat-form-field appearance="outline">
+                  <mat-label>Default Priority</mat-label>
+                  <mat-select formControlName="defaultPriority">
+                    <mat-option value="LOW">Low</mat-option>
+                    <mat-option value="MEDIUM">Medium</mat-option>
+                    <mat-option value="HIGH">High</mat-option>
+                    <mat-option value="URGENT">Urgent</mat-option>
+                  </mat-select>
+                </mat-form-field>
+
+                <div class="form-actions">
+                  <button
+                    mat-raised-button
+                    color="primary"
+                    (click)="saveGeneralSettings()"
+                    [disabled]="saving()">
+                    Save General Settings
+                  </button>
+                </div>
+              </form>
+            </div>
+          </mat-tab>
+
+          <!-- Workflow Settings -->
+          <mat-tab label="Workflow">
+            <div class="tab-content">
+              <form [formGroup]="workflowForm">
+                <h3>Ticket Lifecycle</h3>
+
+                <div class="toggle-field">
+                  <mat-slide-toggle formControlName="allowReopen">Allow reopening closed tickets</mat-slide-toggle>
+                  <span class="hint">Users can reopen tickets that have been closed</span>
+                </div>
+
+                <div class="toggle-field">
+                  <mat-slide-toggle formControlName="requireResolutionNote">Require resolution note</mat-slide-toggle>
+                  <span class="hint">Agents must add a resolution note when resolving tickets</span>
+                </div>
+
+                <mat-form-field appearance="outline">
+                  <mat-label>Auto-close resolved tickets after (days)</mat-label>
+                  <input matInput type="number" formControlName="autoCloseAfterDays" min="1" max="90">
+                  <mat-hint>Resolved tickets will be automatically closed after this many days</mat-hint>
+                </mat-form-field>
+
+                <div class="form-actions">
+                  <button
+                    mat-raised-button
+                    color="primary"
+                    (click)="saveWorkflowSettings()"
+                    [disabled]="saving()">
+                    Save Workflow Settings
+                  </button>
+                </div>
+              </form>
+            </div>
+          </mat-tab>
+
+          <!-- Notification Settings -->
+          <mat-tab label="Notifications">
+            <div class="tab-content">
+              <form [formGroup]="notificationForm">
+                <h3>Email Notifications</h3>
+
+                <div class="toggle-field">
+                  <mat-slide-toggle formControlName="notifyOnCreate">New ticket created</mat-slide-toggle>
+                </div>
+
+                <div class="toggle-field">
+                  <mat-slide-toggle formControlName="notifyOnUpdate">Ticket updated</mat-slide-toggle>
+                </div>
+
+                <div class="toggle-field">
+                  <mat-slide-toggle formControlName="notifyOnComment">New comment added</mat-slide-toggle>
+                </div>
+
+                <div class="toggle-field">
+                  <mat-slide-toggle formControlName="notifyOnResolve">Ticket resolved</mat-slide-toggle>
+                </div>
+
+                <div class="form-actions">
+                  <button
+                    mat-raised-button
+                    color="primary"
+                    (click)="saveNotificationSettings()"
+                    [disabled]="saving()">
+                    Save Notification Settings
+                  </button>
+                </div>
+              </form>
+            </div>
+          </mat-tab>
+
+          <!-- SLA Settings -->
+          <mat-tab label="SLA">
+            <div class="tab-content">
+              <h3>SLA Policies</h3>
+              <p class="placeholder-text">SLA policy configuration will be available here.</p>
+            </div>
+          </mat-tab>
+        </mat-tab-group>
+      </mat-card-content>
+    </mat-card>
+  }
+</div>

@@ -24,6 +24,14 @@
         <mat-icon matListItemIcon>assessment</mat-icon>
         <span matListItemTitle>Reports</span>
       </a>
+
+      @if (authService.currentUser()?.role === 'ADMIN') {
+        <mat-divider></mat-divider>
+        <a mat-list-item routerLink="/admin" routerLinkActive="active">
+          <mat-icon matListItemIcon>admin_panel_settings</mat-icon>
+          <span matListItemTitle>Admin Panel</span>
+        </a>
+      }
     </mat-nav-list>
   </mat-sidenav>
 
@@ -46,6 +54,12 @@
           <p class="role">{{ authService.currentUser()?.role }}</p>
         </div>
         <mat-divider></mat-divider>
+        @if (authService.currentUser()?.role === 'ADMIN') {
+          <button mat-menu-item routerLink="/admin">
+            <mat-icon>admin_panel_settings</mat-icon>
+            <span>Admin Panel</span>
+          </button>
+        }
         <button mat-menu-item>
           <mat-icon>settings</mat-icon>
           <span>Settings</span>

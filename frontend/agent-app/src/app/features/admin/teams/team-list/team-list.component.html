@@ -1,0 +1,130 @@
+<div class="team-list">
+  <div class="header">
+    <h1>Teams</h1>
+    <button mat-raised-button color="primary" routerLink="/admin/teams/new">
+      <mat-icon>add</mat-icon>
+      New Team
+    </button>
+  </div>
+
+  <!-- Filters -->
+  <mat-card class="filters-card">
+    <mat-card-content>
+      <div class="filters">
+        <mat-form-field appearance="outline" class="search-field">
+          <mat-label>Search</mat-label>
+          <input matInput [(ngModel)]="searchQuery" placeholder="Search by name" (keyup.enter)="applyFilter()">
+          <mat-icon matSuffix>search</mat-icon>
+        </mat-form-field>
+
+        <button mat-icon-button matTooltip="Clear filters" (click)="clearFilters()">
+          <mat-icon>clear</mat-icon>
+        </button>
+      </div>
+    </mat-card-content>
+  </mat-card>
+
+  <!-- Data Table -->
+  @if (loading()) {
+    <div class="loading-spinner">
+      <mat-spinner></mat-spinner>
+    </div>
+  } @else {
+    <mat-card>
+      <mat-card-content>
+        <div class="table-container">
+          <table mat-table [dataSource]="dataSource" matSort class="full-width">
+            <!-- Name Column -->
+            <ng-container matColumnDef="name">
+              <th mat-header-cell *matHeaderCellDef mat-sort-header>Name</th>
+              <td mat-cell *matCellDef="let team">
+                <a [routerLink]="['/admin/teams', team.id]" class="team-link">
+                  {{ team.name }}
+                </a>
+              </td>
+            </ng-container>
+
+            <!-- Description Column -->
+            <ng-container matColumnDef="description">
+              <th mat-header-cell *matHeaderCellDef>Description</th>
+              <td mat-cell *matCellDef="let team">
+                {{ team.description || 'No description' }}
+              </td>
+            </ng-container>
+
+            <!-- Members Count Column -->
+            <ng-container matColumnDef="membersCount">
+              <th mat-header-cell *matHeaderCellDef mat-sort-header>Members</th>
+              <td mat-cell *matCellDef="let team">
+                <span class="members-badge">{{ team.membersCount }}</span>
+              </td>
+            </ng-container>
+
+            <!-- Manager Column -->
+            <ng-container matColumnDef="manager">
+              <th mat-header-cell *matHeaderCellDef>Lead</th>
+              <td mat-cell *matCellDef="let team">
+                {{ team.manager?.fullName || 'Unassigned' }}
+              </td>
+            </ng-container>
+
+            <!-- Created Date Column -->
+            <ng-container matColumnDef="createdAt">
+              <th mat-header-cell *matHeaderCellDef mat-sort-header>Created</th>
+              <td mat-cell *matCellDef="let team">
+                {{ team.createdAt | date: 'mediumDate' }}
+              </td>
+            </ng-container>
+
+            <!-- Actions Column -->
+            <ng-container matColumnDef="actions">
+              <th mat-header-cell *matHeaderCellDef>Actions</th>
+              <td mat-cell *matCellDef="let team">
+                <button mat-icon-button [matMenuTriggerFor]="actionMenu">
+                  <mat-icon>more_vert</mat-icon>
+                </button>
+                <mat-menu #actionMenu="matMenu">
+                  <button mat-menu-item [routerLink]="['/admin/teams', team.id]">
+                    <mat-icon>visibility</mat-icon>
+                    <span>View</span>
+                  </button>
+                  <button mat-menu-item [routerLink]="['/admin/teams', team.id, 'edit']">
+                    <mat-icon>edit</mat-icon>
+                    <span>Edit</span>
+                  </button>
+                  <button mat-menu-item [routerLink]="['/admin/teams', team.id, 'members']">
+                    <mat-icon>group_add</mat-icon>
+                    <span>Manage Members</span>
+                  </button>
+                  <mat-divider></mat-divider>
+                  <button mat-menu-item (click)="deleteTeam(team)" class="delete-action">
+                    <mat-icon color="warn">delete</mat-icon>
+                    <span>Delete</span>
+                  </button>
+                </mat-menu>
+              </td>
+            </ng-container>
+
+            <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+            <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+
+            <!-- No Data Row -->
+            <tr class="mat-row" *matNoDataRow>
+              <td class="mat-cell no-data" [attr.colspan]="displayedColumns.length">
+                No teams found
+              </td>
+            </tr>
+          </table>
+        </div>
+
+        <mat-paginator
+          [length]="totalElements()"
+          [pageSize]="pageSize"
+          [pageSizeOptions]="[10, 20, 50, 100]"
+          (page)="onPageChange($event)"
+          showFirstLastButtons>
+        </mat-paginator>
+      </mat-card-content>
+    </mat-card>
+  }
+</div>

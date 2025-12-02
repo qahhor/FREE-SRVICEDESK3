@@ -16,12 +16,12 @@ import java.util.UUID;
 
 /**
  * REST controller for widget API endpoints
+ * Note: CORS is configured globally in SecurityConfig for proper origin management
  */
 @RestController
 @RequestMapping("/widget")
 @RequiredArgsConstructor
 @Slf4j
-@CrossOrigin(origins = "*", allowedHeaders = "*")
 public class WidgetController {
 
     private final WidgetSessionService widgetSessionService;

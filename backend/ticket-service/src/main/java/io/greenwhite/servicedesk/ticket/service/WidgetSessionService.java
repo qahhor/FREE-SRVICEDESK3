@@ -265,11 +265,9 @@ public class WidgetSessionService {
                     .ifPresent(ticket::setRequester);
         }
 
-        // If no requester found, use system user or create minimal record
+        // If no requester found, use first user as fallback
         if (ticket.getRequester() == null) {
-            // Use first admin user as placeholder
-            userRepository.findAll().stream()
-                    .findFirst()
+            userRepository.findFirstByOrderByCreatedAtAsc()
                     .ifPresent(ticket::setRequester);
         }
 

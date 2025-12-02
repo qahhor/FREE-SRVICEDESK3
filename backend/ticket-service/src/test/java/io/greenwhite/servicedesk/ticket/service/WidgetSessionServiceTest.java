@@ -13,14 +13,12 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-import java.util.Collections;
 import java.util.Optional;
 import java.util.UUID;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.*;
 
 /**
@@ -186,7 +184,7 @@ class WidgetSessionServiceTest {
             msg.setId(UUID.randomUUID());
             return msg;
         });
-        when(userRepository.findAll()).thenReturn(Collections.singletonList(testUser));
+        when(userRepository.findFirstByOrderByCreatedAtAsc()).thenReturn(Optional.of(testUser));
         when(ticketRepository.count()).thenReturn(0L);
         when(ticketRepository.save(any(Ticket.class))).thenReturn(mockTicket);
         when(sessionRepository.save(any(WidgetSession.class))).thenReturn(testSession);

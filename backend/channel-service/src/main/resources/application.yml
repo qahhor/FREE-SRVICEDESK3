@@ -64,6 +64,17 @@ channel:
     bot-token: ${TELEGRAM_BOT_TOKEN:}
     bot-username: ${TELEGRAM_BOT_USERNAME:}
     webhook-url: ${TELEGRAM_WEBHOOK_URL:}
+    default-project-key: ${TELEGRAM_DEFAULT_PROJECT_KEY:DESK}
+    max-message-length: ${TELEGRAM_MAX_MESSAGE_LENGTH:4096}
+    welcome-message: ${TELEGRAM_WELCOME_MESSAGE:Welcome to Service Desk! How can we help you today?}
+    help-message: |
+      Available commands:
+      /start - Start conversation
+      /help - Show this help message
+      /new - Create a new ticket
+      /status <ticket_number> - Check ticket status
+      /my_tickets - List your tickets
+      /cancel - Cancel current operation
 
 logging:
   level:

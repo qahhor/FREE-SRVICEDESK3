@@ -11,18 +11,30 @@ export interface TicketEvent {
   timestamp: string;
 }
 
+export interface NotificationEvent {
+  type: 'NOTIFICATION_CREATED' | 'NOTIFICATION_READ' | 'NOTIFICATION_COUNT_UPDATE';
+  notification: any;
+  message: string;
+  timestamp: string;
+}
+
 @Injectable({
   providedIn: 'root'
 })
 export class WebSocketService {
   private client: Client | null = null;
   private ticketEvents$ = new Subject<TicketEvent>();
+  private notificationEvents$ = new Subject<NotificationEvent>();
+  private notificationCountEvents$ = new Subject<number>();
   private connected = false;
+  private userId: string | null = null;
 
-  connect(): void {
+  connect(userId?: string): void {
     if (this.connected) {
       return;
     }
+
+    this.userId = userId || null;
 
     this.client = new Client({
       webSocketFactory: () => new SockJS(environment.wsUrl) as any,
@@ -38,11 +50,26 @@ export class WebSocketService {
       console.log('[WebSocket] Connected');
       this.connected = true;
 
-      // Subscribe to ticket events
+      // Subscribe to ticket events (public topic)
       this.client?.subscribe('/topic/tickets', (message: IMessage) => {
         const event = JSON.parse(message.body) as TicketEvent;
         this.ticketEvents$.next(event);
       });
+
+      // Subscribe to user-specific notification events
+      if (this.userId) {
+        this.client?.subscribe(`/user/${this.userId}/queue/notifications`, (message: IMessage) => {
+          const event = JSON.parse(message.body) as NotificationEvent;
+          this.notificationEvents$.next(event);
+        });
+
+        this.client?.subscribe(`/user/${this.userId}/queue/notifications/count`, (message: IMessage) => {
+          const event = JSON.parse(message.body) as NotificationEvent;
+          if (event.message) {
+            this.notificationCountEvents$.next(parseInt(event.message, 10));
+          }
+        });
+      }
     };
 
     this.client.onDisconnect = () => {
@@ -61,11 +88,20 @@ export class WebSocketService {
     if (this.client) {
       this.client.deactivate();
       this.connected = false;
+      this.userId = null;
     }
   }
 
   getTicketEvents(): Observable<TicketEvent> {
     return this.ticketEvents$.asObservable();
+  }
+
+  getNotificationEvents(): Observable<NotificationEvent> {
+    return this.notificationEvents$.asObservable();
+  }
+
+  getNotificationCountEvents(): Observable<number> {
+    return this.notificationCountEvents$.asObservable();
   }
 
   isConnected(): boolean {

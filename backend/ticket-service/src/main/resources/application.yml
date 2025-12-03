@@ -99,3 +99,15 @@ file:
     s3-secret-key: ${S3_SECRET_KEY:}
     # MinIO configuration (if type=MINIO)
     minio-endpoint: ${MINIO_ENDPOINT:}
+
+# Notification configuration
+notification:
+  enabled: ${NOTIFICATION_ENABLED:true}
+  in-app:
+    enabled: ${NOTIFICATION_INAPP_ENABLED:true}
+    max-per-user: ${NOTIFICATION_MAX_PER_USER:100}
+    retention-days: ${NOTIFICATION_RETENTION_DAYS:30}
+  defaults:
+    batch-size: ${NOTIFICATION_BATCH_SIZE:100}
+    retry-attempts: ${NOTIFICATION_RETRY_ATTEMPTS:3}
+    retry-delay-ms: ${NOTIFICATION_RETRY_DELAY:5000}

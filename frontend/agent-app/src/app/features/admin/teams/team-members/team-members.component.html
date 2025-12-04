@@ -1,0 +1,129 @@
+<div class="team-members">
+  <div class="header">
+    <button mat-icon-button (click)="goBack()">
+      <mat-icon>arrow_back</mat-icon>
+    </button>
+    <h1>Manage Team Members</h1>
+  </div>
+
+  @if (loading()) {
+    <div class="loading-spinner">
+      <mat-spinner></mat-spinner>
+    </div>
+  } @else if (team(); as currentTeam) {
+    <div class="content-grid">
+      <!-- Team Info -->
+      <mat-card class="team-info-card">
+        <mat-card-header>
+          <mat-card-title>{{ currentTeam.name }}</mat-card-title>
+          <mat-card-subtitle>{{ currentTeam.membersCount }} members</mat-card-subtitle>
+        </mat-card-header>
+        <mat-card-content>
+          <p>{{ currentTeam.description || 'No description' }}</p>
+          @if (currentTeam.manager) {
+            <div class="team-lead">
+              <span class="label">Team Lead:</span>
+              <span class="value">{{ currentTeam.manager.fullName }}</span>
+            </div>
+          }
+        </mat-card-content>
+      </mat-card>
+
+      <!-- Add Members -->
+      <mat-card class="add-members-card">
+        <mat-card-header>
+          <mat-card-title>Add Members</mat-card-title>
+        </mat-card-header>
+        <mat-card-content>
+          <mat-form-field appearance="outline" class="full-width">
+            <mat-label>Search users</mat-label>
+            <input
+              matInput
+              [(ngModel)]="searchQuery"
+              (ngModelChange)="onSearchChange()"
+              placeholder="Search by name or email">
+            <mat-icon matSuffix>search</mat-icon>
+          </mat-form-field>
+
+          <div class="available-users">
+            @if (filteredUsers().length > 0) {
+              <mat-list>
+                @for (user of filteredUsers().slice(0, 5); track user.id) {
+                  <mat-list-item>
+                    <div class="user-item">
+                      <div class="user-avatar">
+                        @if (user.avatar) {
+                          <img [src]="user.avatar" [alt]="user.fullName">
+                        } @else {
+                          <span class="initials">{{ getInitials(user) }}</span>
+                        }
+                      </div>
+                      <div class="user-info">
+                        <span class="name">{{ user.fullName }}</span>
+                        <span class="email">{{ user.email }}</span>
+                      </div>
+                      <button mat-icon-button color="primary" (click)="addMember(user)">
+                        <mat-icon>add</mat-icon>
+                      </button>
+                    </div>
+                  </mat-list-item>
+                }
+              </mat-list>
+            } @else if (searchQuery) {
+              <p class="no-results">No users found matching "{{ searchQuery }}"</p>
+            } @else {
+              <p class="no-results">Type to search for users to add</p>
+            }
+          </div>
+        </mat-card-content>
+      </mat-card>
+
+      <!-- Current Members -->
+      <mat-card class="members-card">
+        <mat-card-header>
+          <mat-card-title>Current Members</mat-card-title>
+        </mat-card-header>
+        <mat-card-content>
+          @if (currentTeam.members && currentTeam.members.length > 0) {
+            <mat-list>
+              @for (member of currentTeam.members; track member.id) {
+                <mat-list-item>
+                  <div class="member-item">
+                    <div class="user-avatar">
+                      @if (member.avatar) {
+                        <img [src]="member.avatar" [alt]="member.fullName">
+                      } @else {
+                        <span class="initials">{{ getInitials(member) }}</span>
+                      }
+                    </div>
+                    <div class="user-info">
+                      <span class="name">
+                        {{ member.fullName }}
+                        @if (currentTeam.manager?.id === member.id) {
+                          <mat-chip color="primary">Lead</mat-chip>
+                        }
+                      </span>
+                      <span class="email">{{ member.email }}</span>
+                    </div>
+                    <div class="member-actions">
+                      @if (currentTeam.manager?.id !== member.id) {
+                        <button mat-icon-button matTooltip="Set as Lead" (click)="setAsLead(member)">
+                          <mat-icon>star_outline</mat-icon>
+                        </button>
+                      }
+                      <button mat-icon-button color="warn" matTooltip="Remove" (click)="removeMember(member)">
+                        <mat-icon>remove_circle_outline</mat-icon>
+                      </button>
+                    </div>
+                  </div>
+                </mat-list-item>
+              }
+            </mat-list>
+          } @else {
+            <p class="no-results">No members in this team yet</p>
+          }
+        </mat-card-content>
+      </mat-card>
+    </div>
+  }
+</div>

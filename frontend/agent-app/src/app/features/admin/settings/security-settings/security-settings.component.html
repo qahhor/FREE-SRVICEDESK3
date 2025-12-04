@@ -1,0 +1,129 @@
+<div class="security-settings">
+  <h1>Security Settings</h1>
+
+  @if (loading()) {
+    <div class="loading-spinner">
+      <mat-spinner></mat-spinner>
+    </div>
+  } @else {
+    <mat-card>
+      <mat-card-content>
+        <form [formGroup]="securityForm" (ngSubmit)="onSubmit()">
+          <!-- Password Policy -->
+          <div class="section">
+            <h3>Password Policy</h3>
+
+            <mat-form-field appearance="outline">
+              <mat-label>Minimum Password Length</mat-label>
+              <input matInput type="number" formControlName="passwordMinLength" min="6" max="32">
+              <mat-hint>Between 6 and 32 characters</mat-hint>
+            </mat-form-field>
+
+            <div class="toggle-group">
+              <div class="toggle-field">
+                <mat-slide-toggle formControlName="passwordRequireUppercase">
+                  Require uppercase letter
+                </mat-slide-toggle>
+              </div>
+
+              <div class="toggle-field">
+                <mat-slide-toggle formControlName="passwordRequireNumber">
+                  Require number
+                </mat-slide-toggle>
+              </div>
+
+              <div class="toggle-field">
+                <mat-slide-toggle formControlName="passwordRequireSpecial">
+                  Require special character
+                </mat-slide-toggle>
+              </div>
+            </div>
+          </div>
+
+          <!-- Session Settings -->
+          <div class="section">
+            <h3>Session Settings</h3>
+
+            <mat-form-field appearance="outline">
+              <mat-label>Session Timeout (minutes)</mat-label>
+              <input matInput type="number" formControlName="sessionTimeoutMinutes" min="5" max="1440">
+              <mat-hint>Inactive sessions will be automatically terminated</mat-hint>
+            </mat-form-field>
+
+            <div class="toggle-field">
+              <mat-slide-toggle formControlName="twoFactorEnabled">
+                Enable Two-Factor Authentication
+              </mat-slide-toggle>
+              <span class="hint">Require 2FA for all admin users</span>
+            </div>
+          </div>
+
+          <!-- API Settings -->
+          <div class="section">
+            <h3>API Settings</h3>
+
+            <mat-form-field appearance="outline">
+              <mat-label>API Rate Limit (requests per minute)</mat-label>
+              <input matInput type="number" formControlName="apiRateLimitPerMinute" min="10" max="1000">
+              <mat-hint>Maximum API requests allowed per minute per user</mat-hint>
+            </mat-form-field>
+          </div>
+
+          <!-- IP Whitelist -->
+          <div class="section">
+            <h3>IP Whitelist</h3>
+            <p class="section-description">
+              Restrict admin panel access to specific IP addresses. Leave empty to allow all IPs.
+            </p>
+
+            <div class="ip-input-row">
+              <mat-form-field appearance="outline">
+                <mat-label>Add IP Address</mat-label>
+                <input
+                  matInput
+                  [(ngModel)]="newIpAddress"
+                  [ngModelOptions]="{standalone: true}"
+                  placeholder="192.168.1.1 or 10.0.0.0/24"
+                  (keyup.enter)="addIpAddress()">
+              </mat-form-field>
+              <button mat-raised-button type="button" (click)="addIpAddress()">
+                <mat-icon>add</mat-icon>
+                Add
+              </button>
+            </div>
+
+            @if (ipWhitelist().length > 0) {
+              <mat-chip-set>
+                @for (ip of ipWhitelist(); track ip) {
+                  <mat-chip (removed)="removeIpAddress(ip)">
+                    {{ ip }}
+                    <button matChipRemove>
+                      <mat-icon>cancel</mat-icon>
+                    </button>
+                  </mat-chip>
+                }
+              </mat-chip-set>
+            } @else {
+              <p class="no-ips">No IP restrictions configured</p>
+            }
+          </div>
+
+          <!-- Form Actions -->
+          <div class="form-actions">
+            <button
+              mat-raised-button
+              color="primary"
+              type="submit"
+              [disabled]="saving() || securityForm.invalid">
+              @if (saving()) {
+                <mat-spinner diameter="20"></mat-spinner>
+              } @else {
+                Save Settings
+              }
+            </button>
+          </div>
+        </form>
+      </mat-card-content>
+    </mat-card>
+  }
+</div>

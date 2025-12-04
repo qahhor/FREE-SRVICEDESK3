@@ -1,0 +1,145 @@
+.team-members {
+  .header {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 24px;
+
+    h1 {
+      margin: 0;
+      font-size: 24px;
+      font-weight: 500;
+    }
+  }
+
+  .loading-spinner {
+    display: flex;
+    justify-content: center;
+    padding: 48px;
+  }
+
+  .content-grid {
+    display: grid;
+    grid-template-columns: 300px 1fr;
+    gap: 24px;
+  }
+
+  .team-info-card {
+    grid-column: 1;
+    grid-row: 1;
+
+    .team-lead {
+      margin-top: 16px;
+      padding-top: 16px;
+      border-top: 1px solid rgba(0, 0, 0, 0.1);
+
+      .label {
+        font-size: 12px;
+        color: rgba(0, 0, 0, 0.5);
+        display: block;
+      }
+
+      .value {
+        font-weight: 500;
+      }
+    }
+  }
+
+  .add-members-card {
+    grid-column: 2;
+    grid-row: 1;
+  }
+
+  .members-card {
+    grid-column: 1 / -1;
+  }
+
+  .full-width {
+    width: 100%;
+  }
+
+  .available-users,
+  mat-list {
+    max-height: 300px;
+    overflow-y: auto;
+  }
+
+  .user-item,
+  .member-item {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    width: 100%;
+    padding: 8px 0;
+  }
+
+  .user-avatar {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    overflow: hidden;
+    background-color: #6366f1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+
+    img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+
+    .initials {
+      color: white;
+      font-weight: 500;
+      font-size: 14px;
+    }
+  }
+
+  .user-info {
+    flex: 1;
+    min-width: 0;
+
+    .name {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-weight: 500;
+    }
+
+    .email {
+      display: block;
+      font-size: 12px;
+      color: rgba(0, 0, 0, 0.6);
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+  }
+
+  .member-actions {
+    display: flex;
+    gap: 4px;
+  }
+
+  .no-results {
+    text-align: center;
+    color: rgba(0, 0, 0, 0.5);
+    padding: 16px;
+  }
+}
+
+@media (max-width: 768px) {
+  .team-members {
+    .content-grid {
+      grid-template-columns: 1fr;
+    }
+
+    .team-info-card,
+    .add-members-card,
+    .members-card {
+      grid-column: 1;
+    }
+  }
+}

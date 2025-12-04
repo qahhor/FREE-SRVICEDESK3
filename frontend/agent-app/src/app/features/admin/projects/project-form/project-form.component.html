@@ -1,0 +1,113 @@
+<div class="project-form-container">
+  <div class="header">
+    <button mat-icon-button (click)="cancel()">
+      <mat-icon>arrow_back</mat-icon>
+    </button>
+    <h1>{{ isEditMode() ? 'Edit Project' : 'New Project' }}</h1>
+  </div>
+
+  @if (loading()) {
+    <div class="loading-spinner">
+      <mat-spinner></mat-spinner>
+    </div>
+  } @else {
+    <mat-card>
+      <mat-card-content>
+        <form [formGroup]="projectForm" (ngSubmit)="onSubmit()">
+          <div class="form-row">
+            <mat-form-field appearance="outline" class="key-field">
+              <mat-label>Project Key</mat-label>
+              <input
+                matInput
+                formControlName="key"
+                placeholder="e.g., DESK"
+                (input)="onKeyInput($event)"
+                maxlength="10">
+              <mat-hint>2-10 uppercase letters/numbers</mat-hint>
+              @if (projectForm.get('key')?.invalid && projectForm.get('key')?.touched) {
+                <mat-error>Valid format: PROJ, ABC123</mat-error>
+              }
+            </mat-form-field>
+
+            <mat-form-field appearance="outline" class="name-field">
+              <mat-label>Project Name</mat-label>
+              <input matInput formControlName="name" placeholder="Enter project name">
+              @if (projectForm.get('name')?.invalid && projectForm.get('name')?.touched) {
+                <mat-error>Project name is required (min 2 characters)</mat-error>
+              }
+            </mat-form-field>
+          </div>
+
+          <mat-form-field appearance="outline" class="full-width">
+            <mat-label>Description</mat-label>
+            <textarea matInput formControlName="description" placeholder="Enter project description" rows="4"></textarea>
+          </mat-form-field>
+
+          <mat-form-field appearance="outline" class="full-width">
+            <mat-label>Default Team</mat-label>
+            <mat-select formControlName="defaultTeamId">
+              <mat-option [value]="null">No default team</mat-option>
+              @for (team of teams(); track team.id) {
+                <mat-option [value]="team.id">{{ team.name }}</mat-option>
+              }
+            </mat-select>
+            <mat-hint>Team assigned to new tickets by default</mat-hint>
+          </mat-form-field>
+
+          <div class="form-row">
+            <mat-form-field appearance="outline">
+              <mat-label>Color</mat-label>
+              <mat-select formControlName="color">
+                @for (color of colorOptions; track color.value) {
+                  <mat-option [value]="color.value">
+                    <span class="color-option">
+                      <span class="color-swatch" [style.background-color]="color.value"></span>
+                      {{ color.name }}
+                    </span>
+                  </mat-option>
+                }
+              </mat-select>
+            </mat-form-field>
+
+            <mat-form-field appearance="outline">
+              <mat-label>Icon</mat-label>
+              <mat-select formControlName="icon">
+                @for (icon of iconOptions; track icon.value) {
+                  <mat-option [value]="icon.value">
+                    <span class="icon-option">
+                      <mat-icon>{{ icon.value }}</mat-icon>
+                      {{ icon.name }}
+                    </span>
+                  </mat-option>
+                }
+              </mat-select>
+            </mat-form-field>
+          </div>
+
+          <div class="toggle-field">
+            <mat-slide-toggle formControlName="active">Active</mat-slide-toggle>
+            <span class="hint">Inactive projects are archived and hidden from normal views</span>
+          </div>
+
+          <!-- Form Actions -->
+          <div class="form-actions">
+            <button mat-button type="button" (click)="cancel()">
+              Cancel
+            </button>
+            <button
+              mat-raised-button
+              color="primary"
+              type="submit"
+              [disabled]="saving() || projectForm.invalid">
+              @if (saving()) {
+                <mat-spinner diameter="20"></mat-spinner>
+              } @else {
+                {{ isEditMode() ? 'Update Project' : 'Create Project' }}
+              }
+            </button>
+          </div>
+        </form>
+      </mat-card-content>
+    </mat-card>
+  }
+</div>

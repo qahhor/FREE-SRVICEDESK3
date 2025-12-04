@@ -1,0 +1,152 @@
+<div class="user-form-container">
+  <div class="header">
+    <button mat-icon-button (click)="cancel()">
+      <mat-icon>arrow_back</mat-icon>
+    </button>
+    <h1>{{ isEditMode() ? 'Edit User' : 'New User' }}</h1>
+  </div>
+
+  @if (loading()) {
+    <div class="loading-spinner">
+      <mat-spinner></mat-spinner>
+    </div>
+  } @else {
+    <mat-card>
+      <mat-card-content>
+        <form [formGroup]="userForm" (ngSubmit)="onSubmit()">
+          <div class="form-grid">
+            <!-- Personal Information -->
+            <div class="form-section">
+              <h3>Personal Information</h3>
+
+              <mat-form-field appearance="outline" class="full-width">
+                <mat-label>First Name</mat-label>
+                <input matInput formControlName="firstName" placeholder="Enter first name">
+                @if (userForm.get('firstName')?.invalid && userForm.get('firstName')?.touched) {
+                  <mat-error>{{ getFieldError('firstName') }}</mat-error>
+                }
+              </mat-form-field>
+
+              <mat-form-field appearance="outline" class="full-width">
+                <mat-label>Last Name</mat-label>
+                <input matInput formControlName="lastName" placeholder="Enter last name">
+                @if (userForm.get('lastName')?.invalid && userForm.get('lastName')?.touched) {
+                  <mat-error>{{ getFieldError('lastName') }}</mat-error>
+                }
+              </mat-form-field>
+
+              <mat-form-field appearance="outline" class="full-width">
+                <mat-label>Email</mat-label>
+                <input matInput formControlName="email" type="email" placeholder="Enter email">
+                <mat-icon matSuffix>email</mat-icon>
+                @if (userForm.get('email')?.invalid && userForm.get('email')?.touched) {
+                  <mat-error>{{ getFieldError('email') }}</mat-error>
+                }
+              </mat-form-field>
+
+              <mat-form-field appearance="outline" class="full-width">
+                <mat-label>Phone Number</mat-label>
+                <input matInput formControlName="phone" placeholder="Enter phone number">
+                <mat-icon matSuffix>phone</mat-icon>
+              </mat-form-field>
+            </div>
+
+            <!-- Account Settings -->
+            <div class="form-section">
+              <h3>Account Settings</h3>
+
+              <mat-form-field appearance="outline" class="full-width">
+                <mat-label>Password {{ isEditMode() ? '(Leave blank to keep current)' : '' }}</mat-label>
+                <input matInput formControlName="password" type="password" placeholder="Enter password">
+                <mat-icon matSuffix>lock</mat-icon>
+                @if (userForm.get('password')?.invalid && userForm.get('password')?.touched) {
+                  <mat-error>{{ getFieldError('password') }}</mat-error>
+                }
+              </mat-form-field>
+
+              @if (userForm.get('password')?.value) {
+                <div class="password-strength">
+                  <mat-progress-bar
+                    [mode]="'determinate'"
+                    [value]="passwordStrength()"
+                    [color]="getPasswordStrengthColor()">
+                  </mat-progress-bar>
+                  <span class="strength-label">Password strength: {{ passwordStrengthLabel() }}</span>
+                </div>
+              }
+
+              <mat-form-field appearance="outline" class="full-width">
+                <mat-label>Role</mat-label>
+                <mat-select formControlName="role">
+                  @for (role of roles; track role) {
+                    <mat-option [value]="role">{{ role }}</mat-option>
+                  }
+                </mat-select>
+              </mat-form-field>
+
+              <mat-form-field appearance="outline" class="full-width">
+                <mat-label>Teams</mat-label>
+                <mat-select formControlName="teamIds" multiple>
+                  @for (team of teams(); track team.id) {
+                    <mat-option [value]="team.id">{{ team.name }}</mat-option>
+                  }
+                </mat-select>
+                <mat-hint>Select one or more teams</mat-hint>
+              </mat-form-field>
+            </div>
+
+            <!-- Preferences -->
+            <div class="form-section">
+              <h3>Preferences</h3>
+
+              <mat-form-field appearance="outline" class="full-width">
+                <mat-label>Language</mat-label>
+                <mat-select formControlName="language">
+                  @for (lang of languages; track lang.code) {
+                    <mat-option [value]="lang.code">{{ lang.name }}</mat-option>
+                  }
+                </mat-select>
+              </mat-form-field>
+
+              <mat-form-field appearance="outline" class="full-width">
+                <mat-label>Timezone</mat-label>
+                <mat-select formControlName="timezone">
+                  <mat-option value="UTC">UTC</mat-option>
+                  <mat-option value="America/New_York">America/New York</mat-option>
+                  <mat-option value="America/Los_Angeles">America/Los Angeles</mat-option>
+                  <mat-option value="Europe/London">Europe/London</mat-option>
+                  <mat-option value="Europe/Paris">Europe/Paris</mat-option>
+                  <mat-option value="Asia/Tokyo">Asia/Tokyo</mat-option>
+                  <mat-option value="Asia/Tashkent">Asia/Tashkent</mat-option>
+                </mat-select>
+              </mat-form-field>
+
+              <div class="toggle-field">
+                <mat-slide-toggle formControlName="active">Active</mat-slide-toggle>
+                <span class="hint">Inactive users cannot log in</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Form Actions -->
+          <div class="form-actions">
+            <button mat-button type="button" (click)="cancel()">
+              Cancel
+            </button>
+            <button
+              mat-raised-button
+              color="primary"
+              type="submit"
+              [disabled]="saving() || userForm.invalid">
+              @if (saving()) {
+                <mat-spinner diameter="20"></mat-spinner>
+              } @else {
+                {{ isEditMode() ? 'Update User' : 'Create User' }}
+              }
+            </button>
+          </div>
+        </form>
+      </mat-card-content>
+    </mat-card>
+  }
+</div>

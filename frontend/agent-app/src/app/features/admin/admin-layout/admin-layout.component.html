@@ -1,0 +1,59 @@
+<mat-sidenav-container class="admin-container">
+  <mat-sidenav mode="side" [opened]="sidenavOpened" class="admin-sidenav">
+    <div class="admin-logo">
+      <mat-icon>admin_panel_settings</mat-icon>
+      <h2>Admin Panel</h2>
+    </div>
+
+    <mat-nav-list>
+      @for (item of navItems; track item.path) {
+        <a mat-list-item [routerLink]="item.path" routerLinkActive="active">
+          <mat-icon matListItemIcon>{{ item.icon }}</mat-icon>
+          <span matListItemTitle>{{ item.label }}</span>
+        </a>
+      }
+    </mat-nav-list>
+
+    <div class="sidenav-footer">
+      <button mat-button (click)="goBack()">
+        <mat-icon>arrow_back</mat-icon>
+        Back to App
+      </button>
+    </div>
+  </mat-sidenav>
+
+  <mat-sidenav-content>
+    <mat-toolbar color="primary" class="admin-toolbar">
+      <button mat-icon-button (click)="toggleSidenav()">
+        <mat-icon>menu</mat-icon>
+      </button>
+      <span class="toolbar-title">Administration</span>
+      <span class="spacer"></span>
+
+      <button mat-icon-button [matMenuTriggerFor]="userMenu">
+        <mat-icon>account_circle</mat-icon>
+      </button>
+
+      <mat-menu #userMenu="matMenu">
+        <div class="user-info">
+          <p><strong>{{ authService.currentUser()?.fullName }}</strong></p>
+          <p class="email">{{ authService.currentUser()?.email }}</p>
+          <p class="role">{{ authService.currentUser()?.role }}</p>
+        </div>
+        <mat-divider></mat-divider>
+        <button mat-menu-item (click)="goBack()">
+          <mat-icon>dashboard</mat-icon>
+          <span>Dashboard</span>
+        </button>
+        <button mat-menu-item (click)="logout()">
+          <mat-icon>exit_to_app</mat-icon>
+          <span>Logout</span>
+        </button>
+      </mat-menu>
+    </mat-toolbar>
+
+    <div class="admin-content">
+      <router-outlet></router-outlet>
+    </div>
+  </mat-sidenav-content>
+</mat-sidenav-container>

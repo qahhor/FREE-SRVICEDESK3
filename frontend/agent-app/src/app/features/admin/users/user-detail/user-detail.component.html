@@ -1,0 +1,146 @@
+<div class="user-detail">
+  <div class="header">
+    <button mat-icon-button (click)="goBack()">
+      <mat-icon>arrow_back</mat-icon>
+    </button>
+    <h1>User Details</h1>
+  </div>
+
+  @if (loading()) {
+    <div class="loading-spinner">
+      <mat-spinner></mat-spinner>
+    </div>
+  } @else if (user(); as currentUser) {
+    <div class="content-grid">
+      <!-- Profile Card -->
+      <mat-card class="profile-card">
+        <mat-card-content>
+          <div class="profile-header">
+            <div class="avatar">
+              @if (currentUser.avatar) {
+                <img [src]="currentUser.avatar" [alt]="currentUser.fullName">
+              } @else {
+                <span class="initials">{{ getInitials(currentUser) }}</span>
+              }
+            </div>
+            <h2>{{ currentUser.fullName }}</h2>
+            <p class="email">{{ currentUser.email }}</p>
+            <mat-chip [color]="currentUser.active ? 'primary' : 'warn'">
+              {{ currentUser.active ? 'Active' : 'Inactive' }}
+            </mat-chip>
+          </div>
+
+          <mat-divider></mat-divider>
+
+          <div class="profile-actions">
+            <button mat-raised-button color="primary" (click)="editUser()">
+              <mat-icon>edit</mat-icon>
+              Edit
+            </button>
+            <button mat-stroked-button (click)="toggleStatus()">
+              <mat-icon>{{ currentUser.active ? 'block' : 'check_circle' }}</mat-icon>
+              {{ currentUser.active ? 'Deactivate' : 'Activate' }}
+            </button>
+            <button mat-stroked-button (click)="resetPassword()">
+              <mat-icon>lock_reset</mat-icon>
+              Reset Password
+            </button>
+            <button mat-stroked-button color="warn" (click)="deleteUser()">
+              <mat-icon>delete</mat-icon>
+              Delete
+            </button>
+          </div>
+        </mat-card-content>
+      </mat-card>
+
+      <!-- Details Card -->
+      <mat-card class="details-card">
+        <mat-card-content>
+          <mat-tab-group>
+            <mat-tab label="Information">
+              <div class="tab-content">
+                <div class="info-grid">
+                  <div class="info-item">
+                    <span class="label">Role</span>
+                    <mat-chip>{{ currentUser.role }}</mat-chip>
+                  </div>
+
+                  <div class="info-item">
+                    <span class="label">Phone</span>
+                    <span class="value">{{ currentUser.phone || 'Not provided' }}</span>
+                  </div>
+
+                  <div class="info-item">
+                    <span class="label">Language</span>
+                    <span class="value">{{ currentUser.language }}</span>
+                  </div>
+
+                  <div class="info-item">
+                    <span class="label">Timezone</span>
+                    <span class="value">{{ currentUser.timezone }}</span>
+                  </div>
+
+                  <div class="info-item">
+                    <span class="label">Created</span>
+                    <span class="value">{{ currentUser.createdAt | date: 'medium' }}</span>
+                  </div>
+
+                  <div class="info-item">
+                    <span class="label">Last Updated</span>
+                    <span class="value">{{ currentUser.updatedAt | date: 'medium' }}</span>
+                  </div>
+
+                  <div class="info-item">
+                    <span class="label">Last Login</span>
+                    <span class="value">{{ currentUser.lastLoginAt ? (currentUser.lastLoginAt | date: 'medium') : 'Never' }}</span>
+                  </div>
+                </div>
+              </div>
+            </mat-tab>
+
+            <mat-tab label="Teams">
+              <div class="tab-content">
+                @if (currentUser.teams && currentUser.teams.length > 0) {
+                  <div class="teams-list">
+                    @for (team of currentUser.teams; track team.id) {
+                      <mat-card class="team-item">
+                        <mat-card-content>
+                          <div class="team-info">
+                            <mat-icon>groups</mat-icon>
+                            <div>
+                              <h4>{{ team.name }}</h4>
+                              <p>{{ team.description || 'No description' }}</p>
+                            </div>
+                          </div>
+                          <button mat-icon-button [routerLink]="['/admin/teams', team.id]">
+                            <mat-icon>open_in_new</mat-icon>
+                          </button>
+                        </mat-card-content>
+                      </mat-card>
+                    }
+                  </div>
+                } @else {
+                  <p class="no-data">This user is not a member of any teams.</p>
+                }
+              </div>
+            </mat-tab>
+
+            <mat-tab label="Activity">
+              <div class="tab-content">
+                <p class="no-data">Activity log will be displayed here.</p>
+              </div>
+            </mat-tab>
+
+            <mat-tab label="Statistics">
+              <div class="tab-content">
+                <p class="no-data">User statistics will be displayed here.</p>
+              </div>
+            </mat-tab>
+          </mat-tab-group>
+        </mat-card-content>
+      </mat-card>
+    </div>
+  } @else {
+    <p>User not found</p>
+  }
+</div>

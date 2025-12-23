@@ -1,0 +1,131 @@
+/* Global styles for Customer Portal */
+@use '@angular/material' as mat;
+
+html, body {
+  height: 100%;
+  margin: 0;
+  font-family: Roboto, "Helvetica Neue", sans-serif;
+}
+
+/* Custom theme colors */
+:root {
+  --primary-color: #3f51b5;
+  --accent-color: #ff4081;
+  --warn-color: #f44336;
+  --success-color: #4caf50;
+  --background-color: #fafafa;
+  --text-color: #212121;
+  --text-secondary: #757575;
+}
+
+/* Base styles */
+body {
+  background-color: var(--background-color);
+  color: var(--text-color);
+}
+
+/* Link styles */
+a {
+  color: var(--primary-color);
+  text-decoration: none;
+  
+  &:hover {
+    text-decoration: underline;
+  }
+}
+
+/* Card styles */
+.card {
+  background: white;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  padding: 24px;
+  margin-bottom: 16px;
+}
+
+/* Container styles */
+.container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 16px;
+}
+
+/* Form styles */
+.form-field-full {
+  width: 100%;
+}
+
+/* Button styles */
+.btn-primary {
+  background-color: var(--primary-color) !important;
+  color: white !important;
+}
+
+/* Status colors */
+.status-new { color: #2196F3; }
+.status-open { color: #FF9800; }
+.status-in-progress { color: #9C27B0; }
+.status-pending { color: #FFC107; }
+.status-resolved { color: #4CAF50; }
+.status-closed { color: #607D8B; }
+.status-reopened { color: #E91E63; }
+
+/* Priority colors */
+.priority-low { color: #4CAF50; }
+.priority-medium { color: #2196F3; }
+.priority-high { color: #FF9800; }
+.priority-urgent { color: #F44336; }
+.priority-critical { color: #9C27B0; }
+
+/* Utility classes */
+.text-center { text-align: center; }
+.text-muted { color: var(--text-secondary); }
+.mt-16 { margin-top: 16px; }
+.mb-16 { margin-bottom: 16px; }
+.mt-24 { margin-top: 24px; }
+.mb-24 { margin-bottom: 24px; }
+
+/* Hero section */
+.hero {
+  background: linear-gradient(135deg, var(--primary-color) 0%, #303f9f 100%);
+  color: white;
+  padding: 64px 16px;
+  text-align: center;
+  
+  h1 {
+    font-size: 2.5rem;
+    margin-bottom: 16px;
+  }
+  
+  p {
+    font-size: 1.25rem;
+    opacity: 0.9;
+  }
+}
+
+/* Loading spinner */
+.loading-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 200px;
+}
+
+/* Responsive utilities */
+@media (max-width: 768px) {
+  .hero {
+    padding: 32px 16px;
+    
+    h1 {
+      font-size: 1.75rem;
+    }
+    
+    p {
+      font-size: 1rem;
+    }
+  }
+  
+  .container {
+    padding: 0 8px;
+  }
+}
